@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>FTP Delete Page</title>
+</head>
+<body>
+<span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+<form  action="#" th:action="@{/deleteftpproc}" th:object="${deleteFTP}"
+       method="POST">
+
+    <input type="text" th:field="*{ftpPath}" placeholder="FTP File Path">
+
+    <button type="submit">Delete</button>
+
+</form>
+</body>
+</html>

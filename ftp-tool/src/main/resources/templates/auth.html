@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Authenticate</title>
+</head>
+<body>
+<h1>FTP Tool</h1>
+<h3>Authentication</h3>
+
+
+<form  action="#" th:action="@{/authproc}" th:object="${auth}"
+       method="POST">
+
+    <input type="text" th:field="*{userName}" placeholder="Username"><br>
+
+    <input type="text" th:field="*{passWord}" placeholder="Password"><br>
+
+    <input type="text" th:field="*{vaultDNS}" placeholder="Vault DNS">
+
+    <button type="submit">Authenticate</button>
+
+</form>
+
+
+
+</body>
+</html>

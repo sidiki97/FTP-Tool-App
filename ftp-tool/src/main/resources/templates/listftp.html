@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List FTP</title>
+</head>
+<body>
+<span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+<form  action="#" th:action="@{/listftpproc}" th:object="${listFTP}"
+       method="POST">
+
+    <input type="text" th:field="*{itemPath}" placeholder="Item Path"><br>
+
+    <button type="submit">List</button>
+
+</form>
+</body>
+</html>

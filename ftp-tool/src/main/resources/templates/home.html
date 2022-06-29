@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>FTP Tool Home Page</title>
+</head>
+<body>
+<h1>FTP Tool</h1>
+<h3>Authentication</h3>
+
+
+<span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+<a th:href="@{/auth}">Authenticate</a>
+
+
+</body>
+</html>
