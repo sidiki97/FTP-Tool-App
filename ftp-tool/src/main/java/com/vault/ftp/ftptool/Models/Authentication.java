@@ -3,10 +3,15 @@ package com.vault.ftp.ftptool.Models;
 
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotEmpty;
+
 @Component
 public class Authentication {
+    @NotEmpty(message = "Username is required.")
     private String userName;
+    @NotEmpty(message = "Password is required.")
     private String passWord;
+    @NotEmpty(message = "Vault DNS is required.")
     private String vaultDNS;
 
     public String getUserName() {

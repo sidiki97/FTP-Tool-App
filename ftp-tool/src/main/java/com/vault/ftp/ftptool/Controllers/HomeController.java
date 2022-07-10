@@ -1,22 +1,15 @@
 package com.vault.ftp.ftptool.Controllers;
 
-import com.vault.ftp.ftptool.Models.Authentication;
-import com.vault.ftp.ftptool.Models.CreateFTP;
-import com.vault.ftp.ftptool.Models.DeleteFTP;
-import com.vault.ftp.ftptool.Models.ListFTP;
+import com.vault.ftp.ftptool.Models.*;
 import com.vault.ftp.ftptool.Service.Services;
-import com.veeva.vault.vapil.api.model.response.AuthenticationResponse;
-import com.veeva.vault.vapil.api.model.response.FileStagingItemBulkResponse;
-import com.veeva.vault.vapil.api.model.response.FileStagingItemResponse;
-import com.veeva.vault.vapil.api.model.response.FileStagingJobResponse;
+import com.veeva.vault.vapil.api.model.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.thymeleaf.exceptions.TemplateProcessingException;
+
+import javax.validation.Valid;
 
 @Controller
 public class HomeController {
@@ -31,21 +24,36 @@ public class HomeController {
 
     @GetMapping("/auth")
     public String authPage(Model model){
-        Authentication auth = new Authentication();
-        model.addAttribute("auth",auth);
+        model.addAttribute("auth", new Authentication());
         return "auth";
     }
 
-    @PostMapping("/authproc")
-    public String authProc(@ModelAttribute Authentication auth, Model model){
-        AuthenticationResponse response = services.authenticate(auth);
 
-        if (response.hasErrors()){
-            model.addAttribute("errorMessage",response.getErrors().get(0).getMessage());
+
+    @RequestMapping(method = RequestMethod.POST, value = "/auth")
+    public String authProc(@ModelAttribute("auth") @Valid Authentication auth, BindingResult result, Model model){
+
+        if (result.hasErrors()){
+            return "auth";
+        }
+
+        try{
+            AuthenticationResponse response = services.authenticate(auth);
+            if (response.hasErrors()){
+                model.addAttribute("errorMessage",response.getErrors().get(0).getMessage());
+                return "home";
+            }
+            return "authproc";
+        } catch (NullPointerException e){
+            model.addAttribute("errorMessage", "DNS not recognized");
             return "home";
         }
-        return "authproc";
 
+    }
+
+    @GetMapping("/authproc")
+    public String getAuthProc(){
+        return "authproc";
     }
 
     @GetMapping("/ftpoptions")
@@ -55,6 +63,7 @@ public class HomeController {
 
     @GetMapping("/createftp")
     public String createFTP(Model model){
+        // Add option of adding either file or folder
         CreateFTP createFTP = new CreateFTP();
         model.addAttribute("createFTP",createFTP);
         return "createftp";
@@ -107,18 +116,66 @@ public class HomeController {
         return "listftp";
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/listsftpproc")
+    @RequestMapping(method = RequestMethod.POST, value = "/listftpproc")
     public String ftpListProc(@ModelAttribute ListFTP listFTP, Model model){
         FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP);
-            if (fileStagingItemBulkResponse.hasErrors()){
-                model.addAttribute("errorMessage", fileStagingItemBulkResponse.getErrors().get(0).getMessage());
-                return "listftp";
-            }
-            return "listftpproc";
+
+        if (fileStagingItemBulkResponse.hasErrors()){
+            model.addAttribute("errorMessage", fileStagingItemBulkResponse.getErrors().get(0).getMessage());
+            return "listftp";
+        }
+        model.addAttribute("response",fileStagingItemBulkResponse.getData());
+        return "listftpproc";
         }
 
 
+    @GetMapping("/getitem")
+    public String getItemFTP(Model model){
+        GetItemFTP getItemFTP = new GetItemFTP();
+        model.addAttribute("getitem", getItemFTP);
+        return "getitem";
+    }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/getitemftpproc")
+    public String ftpgetItemProc(@ModelAttribute GetItemFTP getItemFTP, Model model){
+
+
+        VaultResponse vaultResponse = services.getItemFTP(getItemFTP);
+        if(vaultResponse.hasErrors()){
+            model.addAttribute("errorMessage", vaultResponse.getErrors().get(0).getMessage());
+            return "error";
+        }
+        model.addAttribute("response",vaultResponse);
+        return "getitemftpproc";
+
+
+    }
+
+
+    @GetMapping("/updateitem")
+    public String updateItemFTP(Model model){
+        UpdateFTP updateFTP = new UpdateFTP();
+        model.addAttribute("item", updateFTP);
+        return "updateitem";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/updateitemproc")
+    public String ftpUpdateItemProc(@ModelAttribute UpdateFTP updateFTP, Model model){
+
+        FileStagingJobResponse response = services.updateItemFTP(updateFTP);
+        if (response.hasErrors()){
+            model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
+            return "error";
+        }
+        return "updateitemproc";
+
+
+    }
+
+    @GetMapping("/error")
+    public String error(Model model){
+        return "error";
+    }
 
 
 

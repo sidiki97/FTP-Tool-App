@@ -9,14 +9,17 @@
 <h3>Authentication</h3>
 
 
-<form  action="#" th:action="@{/authproc}" th:object="${auth}"
-       method="POST">
+<form  action="#" th:action="@{/auth}" th:object="${auth}"
+       method="post">
 
-    <input type="text" th:field="*{userName}" placeholder="Username"><br>
+    <input type="text" th:field="*{userName}" placeholder="Username">
+    <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" /><br>
 
-    <input type="text" th:field="*{passWord}" placeholder="Password"><br>
+    <input type="password" th:field="*{passWord}" placeholder="Password">
+    <p th:if="${#fields.hasErrors('passWord')}" th:errors="*{passWord}" /><br>
 
     <input type="text" th:field="*{vaultDNS}" placeholder="Vault DNS">
+    <p th:if="${#fields.hasErrors('vaultDNS')}" th:errors="*{vaultDNS}" /><br>
 
     <button type="submit">Authenticate</button>
 

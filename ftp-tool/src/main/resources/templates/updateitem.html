@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update FTP Item</title>
+</head>
+<body>
+<span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+<form  action="#" th:action="@{/updateitemproc}" th:object="${item}"
+       method="POST">
+
+    <input type="text" th:field="*{path}" placeholder="Item Path"><br>
+    <input type="text" th:field="*{newParent}" placeholder="New Parent"><br>
+    <input type="text" th:field="*{newName}" placeholder="Name"><br>
+
+    <button type="submit">Update</button>
+
+</form>
+</body>
+</html>

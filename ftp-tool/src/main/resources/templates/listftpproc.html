@@ -5,7 +5,21 @@
     <title>Successful Directory Listing</title>
 </head>
 <body>
-<p>Success</p>
+<h1>List</h1>
+
+<table>
+    <tr>
+        <th>NAME</th>
+        <th>KIND</th>
+        <th>PATH</th>
+    </tr>
+    <tr th:each="item : ${response}">
+        <td th:text="${item.getName()}">Name</td>
+        <td th:text="${item.getKind()}">Kind</td>
+        <td th:text="${item.getPath()}">Path</td>
+    </tr>
+</table>
+
 <a th:href="@{/ftpoptions}">FTP Options</a>
 </body>
 </html>
