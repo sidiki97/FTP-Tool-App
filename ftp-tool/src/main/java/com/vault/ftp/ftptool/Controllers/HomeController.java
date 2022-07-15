@@ -43,17 +43,12 @@ public class HomeController {
                 model.addAttribute("errorMessage",response.getErrors().get(0).getMessage());
                 return "home";
             }
-            return "authproc";
+            return "ftpoptions";
         } catch (NullPointerException e){
             model.addAttribute("errorMessage", "DNS not recognized");
             return "home";
         }
 
-    }
-
-    @GetMapping("/authproc")
-    public String getAuthProc(){
-        return "authproc";
     }
 
     @GetMapping("/ftpoptions")
@@ -128,7 +123,7 @@ public class HomeController {
         return "listftpproc";
         }
 
-
+    // Unable to retrieve item content with API
     @GetMapping("/getitem")
     public String getItemFTP(Model model){
         GetItemFTP getItemFTP = new GetItemFTP();
@@ -137,13 +132,13 @@ public class HomeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/getitemftpproc")
-    public String ftpgetItemProc(@ModelAttribute GetItemFTP getItemFTP, Model model){
+    public String ftpgetItemProc(@ModelAttribute("getitem") GetItemFTP getItemFTP, Model model){
 
 
         VaultResponse vaultResponse = services.getItemFTP(getItemFTP);
         if(vaultResponse.hasErrors()){
             model.addAttribute("errorMessage", vaultResponse.getErrors().get(0).getMessage());
-            return "error";
+            return "getitem";
         }
         model.addAttribute("response",vaultResponse);
         return "getitemftpproc";
@@ -160,12 +155,12 @@ public class HomeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateitemproc")
-    public String ftpUpdateItemProc(@ModelAttribute UpdateFTP updateFTP, Model model){
+    public String ftpUpdateItemProc(@ModelAttribute("item") UpdateFTP updateFTP, Model model){
 
         FileStagingJobResponse response = services.updateItemFTP(updateFTP);
         if (response.hasErrors()){
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
-            return "error";
+            return "updateitem";
         }
         return "updateitemproc";
 

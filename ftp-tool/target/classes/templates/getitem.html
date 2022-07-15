@@ -5,13 +5,16 @@
     <title>Get Item Content</title>
 </head>
 <body>
+<!-- Make this error message pop up and disappear -->
 <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 <form  action="#" th:action="@{/getitemftpproc}" th:object="${getitem}"
        method="POST">
 
     <input type="text" th:field="*{path}" placeholder="Item Path"><br>
 
-    <button type="submit">Content</button>
+    <button type="submit">Content</button><br>
+
+    <a th:href="@{/ftpoptions}">Back to FTP APIs</a>
 
 </form>
 </body>
