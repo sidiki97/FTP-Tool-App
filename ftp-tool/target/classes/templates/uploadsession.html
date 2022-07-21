@@ -57,71 +57,59 @@
       }
     </style>
     <link href="css/list-groups.css" rel="stylesheet">
-    <title>File Staging Options</title>
     <link href="css/heroes.css" rel="stylesheet">
+    <title>Resumable Upload Session Options</title>
 </head>
 <body>
 
 <div class="px-4 py-5 my-5 text-center">
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
-    <h1 class="display-5 fw-bold">File Staging APIs</h1>
+    <h1 class="display-5 fw-bold">Resumable Upload Session APIs</h1>
 </div>
 <div class="list-group w-auto">
-
-    <a th:href="@{/createftp}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+    <a th:href="@{/createRUS}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
         <img src="images/add-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <h6 class="mb-0">Create File or Folder</h6>
-                <p class="mb-0 opacity-75">Upload files or folders up to 50MB to the File Staging Server.</p>
+                <h6 class="mb-0">Create Resumable Upload Sessions</h6>
+                <p class="mb-0 opacity-75">Initiate a multipart upload session and return an upload session ID.</p>
             </div>
         </div>
     </a>
-    <a th:href="@{/deleteftp}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-        <img src="images/trash-bin-outline.svg" width="32" height="32">
-        <div class="d-flex gap-2 w-100 justify-content-between">
-            <div>
-                <h6 class="mb-0">Delete File or Folder</h6>
-                <p class="mb-0 opacity-75">Delete an individual file or folder from the file staging server.</p>
-            </div>
-        </div>
-    </a>
-    <a th:href="@{/listftp}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+    <a th:href="@{/listUS}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
         <img src="images/list-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <h6 class="mb-0">List Items at a Path</h6>
-                <p class="mb-0 opacity-75">Return a list of files and folders for the specified path. Paths are different for Admin users (Vault Owners and System Admins) and non-Admin users.</p>
+                <h6 class="mb-0">List Upload Sessions</h6>
+                <p class="mb-0 opacity-75">Return a list of active upload sessions.</p>
             </div>
         </div>
     </a>
-    <a th:href="@{/updateitem}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-        <img src="images/refresh-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
+    <a th:href="@{/abortsession}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+        <img src="images/trash-bin-outline.svg" width="32" height="32">
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <h6 class="mb-0">Update Folder or File</h6>
-                <p class="mb-0 opacity-75">Move or rename a folder or file on the file staging server. You can move and rename an item in the same request.</p>
+                <h6 class="mb-0">Abort Upload Session</h6>
+                <p class="mb-0 opacity-75">Abort an active upload session and purge all uploaded file parts.
+                    Admin users can see and abort all upload sessions, while non-Admin users can only see and abort sessions where they are the owner.
+                </p>
             </div>
         </div>
     </a>
-<!--    <a th:href="@{/getitem}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">-->
-<!--        <img src="images/arrow-down-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">-->
-<!--        <div class="d-flex gap-2 w-100 justify-content-between">-->
-<!--            <div>-->
-<!--                <h6 class="mb-0">Get Item Content</h6>-->
-<!--                <p class="mb-0 opacity-75">Retrieve the content of a specified file from the file staging server. Use the Range header to create resumable downloads for large files, or to continue downloading a file if your session is interrupted.</p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </a>-->
-    <a th:href="@{/uploadsession}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-        <img src="images/cloud-upload-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
+<!--    Need to add Get upload session details endpoint and Upload Session endpoint (Important one)-->
+    <a th:href="@{/uploadRUS}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+        <img src="images/cloud-upload-outline.svg" width="32" height="32">
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <h6 class="mb-0">Resumable Upload Sessions</h6>
-                <p class="mb-0 opacity-75">Use resumable upload sessions to upload files larger than 50MB to the file staging server</p>
+                <h6 class="mb-0">Upload to a Session</h6>
+                <p class="mb-0 opacity-75">The session owner can upload parts of a file to an active upload session.
+                    By default, you can upload up to 2000 parts per upload session, and each part can be up to 50MB.  Split files into parts.
+                    Each part must be the same size, except for the last part in the upload session.
+                </p>
             </div>
         </div>
     </a>
+
 </div>
 
 

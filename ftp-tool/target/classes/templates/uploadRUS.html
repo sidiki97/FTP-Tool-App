@@ -3,15 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  <title>File Staging Tool</title>
-  <meta name="theme-color" content="#712cf9">
+
+  <title>Upload to a Session</title>
+
   <style>
-      body {
-        background-image: url("images/veev.webp");
-        background-repeat: no-repeat;
-        background-size: cover;
-        }
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -63,44 +60,50 @@
         -webkit-overflow-scrolling: touch;
       }
     </style>
-  <link href="css/cover.css" rel="stylesheet">
+
+  <link href="css/signin.css" rel="stylesheet">
+
 </head>
-<body class="d-flex h-100 text-center text-white bg-dark">
+<body class="text-center">
 
 
+<main class="form-signin w-100 m-auto">
+  <form  action="#" th:action="@{/uploadRUSproc}" th:object="${uploadUS}"
+         method="post">
+    <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+    <h1 class="h3 mb-3 fw-normal">Upload to a Session</h1>
+    <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
-<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-  <header class="mb-auto">
-    <div>
-      <h3 class="float-md-start mb-0" th:if="${errorMessage}"  th:text="${errorMessage}">Error</h3>
-
-<!--      <nav class="nav nav-masthead justify-content-center float-md-end">-->
-<!--        <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Home</a>-->
-<!--        <a class="nav-link fw-bold py-1 px-0" href="#">Features</a>-->
-<!--        <a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>-->
-<!--      </nav>-->
+    <div class="form-floating">
+      <input type="text" th:field="*{filePath}" placeholder="Local File Path"  class="form-control" id="path">
+      <label for="path">Local File Path</label>
     </div>
-  </header>
 
-  <main class="px-3">
-    <h1>Vault File Staging Tool</h1>
-    <p class="lead">An alternative to FTP clients.  Use File Staging APIs for seamless interaction with the File Staging Server.</p>
-    <p class="lead">
-      <a th:href="@{/auth}" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Authenticate</a>
-    </p>
-  </main>
+    <div class="form-floating">
+      <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessId">
+      <label for="sessId">Session ID</label>
+    </div>
+    <div class="form-floating">
+      <input type="text" th:field="*{filename}" placeholder="Local Filename"  class="form-control" id="filename">
+      <label for="filename">Local Filename</label>
+    </div>
+    <div class="form-floating">
+      <input type="number" th:field="*{partNum}" placeholder="Part Number"  class="form-control" id="partnum">
+      <label for="partnum">Part Number</label>
+    </div>
 
-<!--  <footer class="mt-auto text-white-50">-->
-<!--    <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p>-->
-<!--  </footer>-->
-</div>
+    <div>
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Upload</button>
+    </div>
+    <div>
+      <a class="btn btn-outline-secondary" th:href="@{/uploadsession}" role="button">Upload Session APIs</a>
+    </div>
 
+  </form>
+</main>
 
-
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
 
 </body>
 </html>
-
-

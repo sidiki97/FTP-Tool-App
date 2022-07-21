@@ -1,9 +1,13 @@
 /Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/ApiFtpToolApplication.java
-/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/GetItemFTP.java
-/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Controllers/HomeController.java
-/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/UpdateFTP.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/UploadSession.java
 /Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/Authentication.java
 /Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Service/Services.java
-/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/DeleteFTP.java
 /Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/ListFTP.java
 /Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/CreateFTP.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/CreateResumableUS.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/GetItemFTP.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Service/UploadSessionService.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Controllers/HomeController.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/UploadSessionFile.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/UpdateFTP.java
+/Users/abbassiddiqui-mbpr16/Desktop/ftp-tool/src/main/java/com/vault/ftp/ftptool/Models/DeleteFTP.java

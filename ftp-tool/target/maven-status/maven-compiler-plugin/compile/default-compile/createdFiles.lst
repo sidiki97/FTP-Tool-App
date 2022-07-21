@@ -1,4 +1,5 @@
 com/vault/ftp/ftptool/Models/CreateFTP.class
+com/vault/ftp/ftptool/Models/UploadSession.class
 com/vault/ftp/ftptool/Models/DeleteFTP.class
 com/vault/ftp/ftptool/Models/Authentication.class
 com/vault/ftp/ftptool/Service/Services.class
@@ -7,3 +8,6 @@ com/vault/ftp/ftptool/Controllers/HomeController.class
 com/vault/ftp/ftptool/Models/GetItemFTP.class
 com/vault/ftp/ftptool/ApiFtpToolApplication.class
 com/vault/ftp/ftptool/Models/ListFTP.class
+com/vault/ftp/ftptool/Models/CreateResumableUS.class
+com/vault/ftp/ftptool/Models/UploadSessionFile.class
+com/vault/ftp/ftptool/Service/UploadSessionService.class

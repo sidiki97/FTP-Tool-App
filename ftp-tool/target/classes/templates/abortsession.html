@@ -6,7 +6,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
-    <title>File Staging Delete</title>
+    <title>Abort Upload Session</title>
 
     <style>
       .bd-placeholder-img {
@@ -68,19 +68,19 @@
 
 
 <main class="form-signin w-100 m-auto">
-    <form  action="#" th:action="@{/deleteftpproc}" th:object="${deleteFTP}"
+    <form  action="#" th:action="@{/abortsessionproc}" th:object="${abortId}"
            method="post">
         <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Delete File or Folder</h1>
+        <h1 class="h3 mb-3 fw-normal">Abort Upload Session</h1>
         <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
         <div class="form-floating">
-            <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
-            <label for="ftppath">File Staging Server File Path</label>
+            <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessId">
+            <label for="sessId">Session ID</label>
         </div>
 
         <div>
-            <button class="btn btn-danger" type="submit">Delete</button>
+            <button class="btn btn-danger" type="submit">Abort</button>
         </div>
 
     </form>
