@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
-    <title>File Staging Delete</title>
+    <title>Upload Session In Progress</title>
+    <meta name="theme-color" content="#712cf9">
 
     <style>
       .bd-placeholder-img {
@@ -60,33 +60,24 @@
         -webkit-overflow-scrolling: touch;
       }
     </style>
-
-    <link href="css/signin.css" rel="stylesheet">
+    <link href="css/heroes.css" rel="stylesheet">
 
 </head>
-<body class="text-center">
+<body>
 
-
-<main class="form-signin w-100 m-auto">
-    <form  action="#" th:action="@{/deleteftpproc}" th:object="${deleteFTP}"
-           method="post">
-        <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Delete File or Folder</h1>
-        <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
-
-        <div class="form-floating">
-            <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
-            <label for="ftppath">File Staging Server File Path</label>
+<div class="px-4 py-5 my-5 text-center">
+    <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
+    <h1 class="display-5 fw-bold">Upload Session In Progress</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Upload Session In Progress</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a class="btn btn-primary" th:href="@{/uploadsession}">File Staging APIs</a>
+            <a class="btn btn-secondary" th:href="@{/deleteftp}">Upload to Another Session</a>
         </div>
-
-        <div>
-            <button class="btn btn-danger" type="submit">Delete</button>
-        </div>
-
-    </form>
-</main>
-
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
 
 </body>
 </html>

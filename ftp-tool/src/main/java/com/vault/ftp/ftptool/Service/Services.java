@@ -8,6 +8,10 @@ import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.request.FileStagingRequest;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 
@@ -75,8 +79,9 @@ public class Services {
 
     public VaultResponse getItemFTP(GetItemFTP getItemFTP){
         VaultResponse vaultResponse = vaultClient.newRequest(FileStagingRequest.class)
-                .setRange("bytes=0-1000")
+                .setRange("bytes=0-100000")
                 .getItemContent(getItemFTP.getPath());
+
 
         return vaultResponse;
     }
@@ -90,6 +95,78 @@ public class Services {
 
         return fileStagingJobResponse;
     }
+
+    public FileStagingSessionResponse createRUS(CreateResumableUS createResumableUS){
+//        float fileSize = (float)createResumableUS.getFileSize();
+//        if (!((System.getProperty("os.name").substring(0,3)) == "Mac")){
+//            fileSize = (fileSize / (1024*1024)) * 1000 * 1000;
+//        }
+//        int actualFileSize = (int)fileSize;
+        FileStagingSessionResponse fileStagingSessionResponse = vaultClient.newRequest(FileStagingRequest.class)
+                .createResumableUploadSession(createResumableUS.getFileStagingPath(),createResumableUS.getFileSize());
+
+        return fileStagingSessionResponse;
+    }
+
+    public FileStagingSessionResponse uploadUS(UploadSessionFile sessionFile, byte[] fileContent) throws IOException {
+        // TODO: Use program to split files or ask user to split files
+        // TODO: Figure out a way to run this API consecutively with split files
+
+        FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
+                .setFile(sessionFile.getFilename(), fileContent)
+                .uploadToASession(sessionFile.getSessionId(), sessionFile.getPartNum());
+
+        return response;
+    }
+
+    public FileStagingSessionBulkResponse listUS(){
+        FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+                .listUploadSessions();
+
+        return response;
+    }
+
+    public VaultResponse deleteUS(UploadSession uploadSession){
+        VaultResponse response = vaultClient.newRequest(FileStagingRequest.class)
+                .abortUploadSession(uploadSession.getSessionId());
+
+        return response;
+    }
+
+    /*
+    Idea for Upload Session endpoint:
+
+    - Get file input
+    - Get size of file
+    - Desired size of parts (5 MB to 50 MB)
+    - Determine number of parts (Max 2000 per upload session)
+    - Need Session ID
+
+    Basically:
+    - Call upload session api consecutively until all parts are done, then call commit upload session endpoint
+    - Avoid repeated user actions - automate process
+
+    Process
+    - Upload File
+    - Code to determine filesize
+    - If less than 50 Mb then ask to upload with regular create file staging api
+    - Then take size / 5 = num parts
+    - If num parts > 2000, then divide by 10
+    - loop increase divider by 5 until reach 50 and while num parts > 2000
+    - if still num part > 2000, then say upload cannot be done since file is too large
+
+    - if sucessfully determined num parts, now divide size by num parts
+    - round up number every part except last will take this number of bytes
+
+    File need to be converted to byte array
+    - when setting file
+
+
+    Other App work
+    - Validation before submit: Auth, other areas as needed
+    - Select Database for Session Ids in resumable upload session
+     */
+
 
     public VaultClientId getVaultClientId() {
         return vaultClientId;
