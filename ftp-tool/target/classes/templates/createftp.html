@@ -64,9 +64,15 @@
 </head>
 <body class="text-center">
 
+<!--
+Going to add form element with input file
+Test request parameter
+Get byte array from Multipart File object
+add that to request
+-->
 <main class="form-signin w-100 m-auto">
-    <form  action="#" th:action="@{/createftpproc}" th:object="${createFTP}"
-           method="post">
+    <form  th:action="@{/createftpproc}" th:object="${createFTP}"
+           method="post" enctype="multipart/form-data">
         <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Create File or Folder</h1>
         <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
@@ -91,6 +97,7 @@
             <input id="localpath" style="display: none;" type="text" th:field="*{inputPath}" placeholder="Local File Path" class="form-control">
             <label for="localpath">Local File Path</label>
         </div>
+
         <div class="form-floating">
             <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
             <label for="ftppath">File Staging Server File Path</label>
@@ -103,6 +110,9 @@
 
 
     </form>
+    <div>
+        <a th:if="${errorMessage}"  class="btn btn-outline-warning" th:href="@{/listftp}"  >Back to Directory Listing</a>
+    </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>

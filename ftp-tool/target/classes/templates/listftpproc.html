@@ -7,6 +7,28 @@
     <title>Successful Directory Listing</title>
     <meta name="theme-color" content="#712cf9">
     <style>
+
+      .form-signin {
+          max-width: 330px;
+          padding: 15px;
+        }
+
+        .form-signin .form-floating:focus-within {
+          z-index: 2;
+        }
+
+        .form-signin input[type="text"] {
+          margin-bottom: -1px;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+
+        .form-signin input[type="password"] {
+          margin-bottom: 10px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -57,17 +79,166 @@
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
       }
+
+
+
     </style>
 
     <link href="css/heroes.css" rel="stylesheet">
 </head>
-<body>
+<body class="text-center">
 
 
 <div class="px-4 py-5 my-5 text-center">
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">File Staging Items</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+        Create Item
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">Create</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  th:action="@{/createftpproc}" th:object="${createFTP}"
+                               method="post" enctype="multipart/form-data">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Create File or Folder</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+                            <div class="input-group mb-3">
+                                <label class="input-group-text" for="inputGroupSelect01">Kind</label>
+                                <select th:field="*{kind}" class="form-select" id="inputGroupSelect01" onchange="inputChange(this)">
+                                    <option value="" selected>Please select kind: </option>
+                                    <option id="file" value="File">File</option>
+                                    <option value="Folder">Folder</option>
+                                </select>
+                            </div>
+                            <script type="text/javascript">
+                                function inputChange(that) {
+                                if (document.getElementById("file").selected) {
+                                    document.getElementById("localpath").style.display = "block";
+                                } else {
+                                    document.getElementById("localpath").style.display = "none";
+                                }
+                                }
+                            </script>
+                            <div class="form-floating">
+                                <input id="localpath" style="display: none;" type="text" th:field="*{inputPath}" placeholder="Local File Path" class="form-control">
+                                <label for="localpath">Local File Path</label>
+                            </div>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
+                                <label for="ftppath">File Staging Server File Path</label>
+                            </div>
+
+
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit">Create</button>
+                            </div>
+
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="UpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/updateitemproc}" th:object="${item}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Update File or Folder</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input id="path" type="text" th:field="*{path}" placeholder="File Staging Server File Path" class="form-control">
+                                <label for="path">File Staging Server File Path</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" th:field="*{newParent}" placeholder="Parent Directory"  class="form-control" id="dir">
+                                <label for="dir">Parent Directory</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" th:field="*{newName}" placeholder="Filename"  class="form-control" id="filename">
+                                <label for="filename">Filename</label>
+                            </div>
+
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit">Update</button>
+                            </div>
+
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/deleteftpproc}" th:object="${deleteFTP}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Delete File or Folder</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="deleteftppath" required>
+                                <label for="deleteftppath">File Staging Server File Path</label>
+                            </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="flexCheckChecked" th:field="*{recursive}" checked>
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            Recursive Deletion
+                                        </label>
+                                    </div>
+                            <div>
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </div>
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-lg-6 mx-auto">
+
         <table class="table table-hover">
             <tr>
                 <th>NAME</th>
@@ -75,19 +246,69 @@
                 <th>PATH</th>
                 <th>SIZE</th>
             </tr>
-            <tr th:each="item : ${response}">
+            <tr th:each="item : ${response}" th:class="${itemStat.index}">
                 <td th:text="${item.getName()}">Name</td>
                 <td th:text="${item.getKind()}">Kind</td>
                 <td th:text="${item.getPath()}">Path</td>
                 <td th:text="${item.getSize()}">Size</td>
+<!--                <td>-->
+<!--                    <a th:href="@{/deleteftp}">-->
+<!--                        <label>Delete</label>-->
+<!--                    </a>-->
+<!--                </td>-->
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary">Actions</button>
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#createModal">Create File</a></li>
+                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#updateModal">Update</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="btn btn-danger" onclick="passPath(this)"  data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
+
+
             </tr>
         </table>
+        <p>
+
+        </p>
+        <script>
+            function passPath(that){
+                let val = that.parentElement.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling;
+                if (that.innerText == "Delete"){
+                    let input = document.getElementById("deleteftppath");
+                    input.value = val.innerText;
+                } else if (that.innerText == "Update"){
+                    let input = document.getElementById("path");
+                    input.value = val.innerText;
+                } else if (that.innerText == "Create File"){
+                    if (val.previousElementSibling.innerText == "folder"){
+                        let input = document.getElementById("ftppath");
+                        input.value = val.innerText;
+
+                    } else {
+                        alert('Only can create file in folder.')
+                    }
+                }
+
+
+            }
+        </script>
+
+
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a class="btn btn-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
             <a class="btn btn-secondary" th:href="@{/listftp}">List Other</a>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
 </body>
 </html>
