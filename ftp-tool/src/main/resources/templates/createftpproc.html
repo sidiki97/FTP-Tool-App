@@ -74,7 +74,33 @@
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">Upload Successful</h1>
     <div class="col-lg-6 mx-auto">
-        <p class="lead mb-4">File Info Goes here.</p>
+        <p class="lead mb-4">File Info:</p>
+        <div>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">Kind:</li>
+                <li class="list-group-item" th:text="${kind}">Kind</li>
+            </ul>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">Path:</li>
+                <li class="list-group-item" th:text="${path}">Path</li>
+            </ul>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">Name:</li>
+                <li class="list-group-item" th:text="${name}">Name</li>
+            </ul>
+            <script>
+
+            </script>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">Size (bytes):</li>
+                <li class="list-group-item" th:text="${size}">Size</li>
+            </ul>
+            <ul class="list-group list-group-horizontal">
+                <li class="list-group-item">Content MD5:</li>
+                <li class="list-group-item" th:text="${md5}">md5</li>
+            </ul>
+
+        </div>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a class="btn btn-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
             <a class="btn btn-secondary" th:href="@{/createftp}">Upload More</a>

@@ -7,11 +7,16 @@ import com.veeva.vault.vapil.api.client.VaultClientId;
 import com.veeva.vault.vapil.api.model.response.*;
 import com.veeva.vault.vapil.api.request.FileStagingRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.Map;
 
 
@@ -27,6 +32,7 @@ public class Services {
     private Map<String, FileStagingRequest.Kind> kindMap = Map.of(
             "File", FileStagingRequest.Kind.FILE,
             "Folder", FileStagingRequest.Kind.FOLDER);
+
 
     public AuthenticationResponse authenticate(Authentication authentication){
         vaultClient = VaultClientBuilder
@@ -52,7 +58,6 @@ public class Services {
                 .setInputPath(createFTP.getInputPath())
                 .createFolderOrFile(kindMap.get(createFTP.getKind()), createFTP.getFtpPath());
 
-        //TODO: look into adding setfile function
         //TODO: ask to overwrite
 
         return fileStagingItemResponse;
@@ -62,16 +67,30 @@ public class Services {
 
     public FileStagingJobResponse deleteFTP(DeleteFTP deleteFTP){
         FileStagingJobResponse fileStagingJobResponse = vaultClient.newRequest(FileStagingRequest.class)
+                .setRecursive(deleteFTP.getRecursive())
                 .deleteFolderOrFile(deleteFTP.getFtpPath());
 
+        /*
+        Getting Exception with Recursive flag
+         Vault Exception OPERATION_IN_PROGRESS Another [POST] operation on [{directory/}] or destination in progress
+
+         */
         // TODO: add recursive ability
         // TODO: prevent deletion of root
 
         return fileStagingJobResponse;
     }
 
-    public FileStagingItemBulkResponse listFTP(ListFTP listFTP){
+    public FileStagingItemBulkResponse listFTP(ListFTP listFTP, boolean initial){
+
+        if (initial){
+            listFTP.setRecursive(true);
+        }
+        else if (listFTP.getRecursive() == null){
+            listFTP.setRecursive(false);
+        }
         FileStagingItemBulkResponse fileStagingItemBulkResponse = vaultClient.newRequest(FileStagingRequest.class)
+                .setRecursive(listFTP.getRecursive())
                 .listItemsAtAPath(listFTP.getItemPath());
 
         return fileStagingItemBulkResponse;
@@ -168,9 +187,18 @@ public class Services {
      */
 
 
+    public FileStagingSessionResponse getUSDetails(UploadSession uploadSession){
+        FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
+                .getUploadSessionDetails(uploadSession.getSessionId());
+
+        return response;
+    }
+
+
     public VaultClientId getVaultClientId() {
         return vaultClientId;
     }
+
 
 
 }

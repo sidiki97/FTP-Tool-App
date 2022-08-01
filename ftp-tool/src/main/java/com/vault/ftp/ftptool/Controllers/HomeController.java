@@ -3,6 +3,7 @@ package com.vault.ftp.ftptool.Controllers;
 import com.vault.ftp.ftptool.Models.*;
 import com.vault.ftp.ftptool.Service.Services;
 import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.request.FileStagingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +19,16 @@ import java.nio.file.Paths;
 /*
 Issues Noticed:
 - Get Item content does not appear return item content, only possibility appears to be able to return binary content
-TODO: Increase bytes at this endpoint and see if content returned - nope
+- Issue with recursive delete API
+- TODO:
+    - Idea: db connection to store file staging server directories names
+    - When updating file/folder retrieve directories for parent directories input
+
+  TODO: Resumable upload session
+    - Get session details in list page
+    -
+
+ Todo: Resolve create folder issue
  */
 
 @Controller
@@ -26,6 +36,8 @@ public class HomeController {
 
     @Autowired
     private Services services;
+
+    private boolean initial = true;
 
     @GetMapping
     public String homePage(){
@@ -63,7 +75,8 @@ public class HomeController {
     }
 
     @GetMapping("/ftpoptions")
-    public static String ftpOptions(){
+    public String ftpOptions(){
+        initial = true;
         return "ftpoptions";
     }
 
@@ -76,8 +89,7 @@ public class HomeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createftpproc")
-    public String ftpCreateProc(@ModelAttribute CreateFTP createFTP, Model model){
-
+    public String ftpCreateProc(@ModelAttribute CreateFTP createFTP, Model model) {
 
         try
         {
@@ -87,6 +99,15 @@ public class HomeController {
                 model.addAttribute("errorMessage", fileStagingItemResponse.getErrors().get(0).getMessage());
                 return "createftp";
             }
+            model.addAttribute("kind", fileStagingItemResponse.getData().getKind());
+            model.addAttribute("path", fileStagingItemResponse.getData().getPath());
+            model.addAttribute("name", fileStagingItemResponse.getData().getName());
+            if (!(fileStagingItemResponse.getData().getKind() == "file")){
+                model.addAttribute("size", fileStagingItemResponse.getData().getSize());
+                model.addAttribute("md5", fileStagingItemResponse.getData().getFileContentMd5());
+            }
+
+
             return "createftpproc";
         }
         catch (NullPointerException exception){
@@ -95,8 +116,8 @@ public class HomeController {
         }
 
 
-
     }
+
 
     @GetMapping("/deleteftp")
     public String deleteFTP(Model model){
@@ -106,17 +127,27 @@ public class HomeController {
     }
 
     @PostMapping("/deleteftpproc")
-    public String ftpDeleteProc(@ModelAttribute DeleteFTP deleteFTP, Model model){
+    public String ftpDeleteProc(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP, Model model){
         FileStagingJobResponse fileStagingJobResponse = services.deleteFTP(deleteFTP);
         if (fileStagingJobResponse.hasErrors()){
             model.addAttribute("errorMessage", fileStagingJobResponse.getErrors().get(0).getMessage());
             return "deleteftp";
         }
+        model.addAttribute("jobId", fileStagingJobResponse.getData().getJobId());
         return "deleteftpproc";
     }
 
     @GetMapping("/listftp")
     public String listFTP(Model model){
+        if (initial){
+            initial = false;
+            FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(new ListFTP(), true);
+            model.addAttribute("createFTP",new CreateFTP());
+            model.addAttribute("item", new UpdateFTP());
+            model.addAttribute("deleteFTP", new DeleteFTP());
+            model.addAttribute("response",fileStagingItemBulkResponse.getData());
+            return "listftpproc";
+        }
         ListFTP listFTP = new ListFTP();
         model.addAttribute("listFTP",listFTP);
         return "listftp";
@@ -124,15 +155,27 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/listftpproc")
     public String ftpListProc(@ModelAttribute ListFTP listFTP, Model model){
-        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP);
+
+        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP, false);
 
         if (fileStagingItemBulkResponse.hasErrors()){
             model.addAttribute("errorMessage", fileStagingItemBulkResponse.getErrors().get(0).getMessage());
             return "listftp";
         }
+        model.addAttribute("createFTP",new CreateFTP());
+        model.addAttribute("item", new UpdateFTP());
+        model.addAttribute("deleteFTP", new DeleteFTP());
         model.addAttribute("response",fileStagingItemBulkResponse.getData());
         return "listftpproc";
-        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/initiallist")
+    public String intialListProc(Model model){
+        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(new ListFTP(), true);
+
+        model.addAttribute("response",fileStagingItemBulkResponse.getData());
+        return "initiallist";
+    }
 
     // Unable to retrieve item content with API
 //    @GetMapping("/getitem")
@@ -288,13 +331,30 @@ public class HomeController {
     }
 
     @PostMapping("/abortsessionproc")
-    public String abortSessionProc(@ModelAttribute UploadSession uploadSession, Model model) {
+    public String abortSessionProc(@ModelAttribute("abortId") UploadSession uploadSession, Model model) {
         VaultResponse response = services.deleteUS(uploadSession);
         if (response.hasErrors()){
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
             return "abortsession";
         }
         return "abortsessionproc";
+    }
+
+    @GetMapping("/getsessiondetail")
+    public String getUploadSession(Model model){
+        model.addAttribute("sessId",new UploadSession());
+        return "getsessiondetail";
+    }
+
+    @PostMapping("/sessiondetail")
+    public String uploadSession(@ModelAttribute("sessId") UploadSession uploadSession, Model model) {
+        FileStagingSessionResponse response = services.getUSDetails(uploadSession);
+        if (response.hasErrors()){
+            model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
+            return "getsessiondetail";
+        }
+        model.addAttribute("data", response.getData());
+        return "sessiondetail";
     }
 
     @GetMapping("/error")

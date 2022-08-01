@@ -90,6 +90,9 @@
 
 
     </form>
+    <div>
+        <a th:if="${errorMessage}"  class="btn btn-outline-warning" th:href="@{/listftp}"  >Back to Directory Listing</a>
+    </div>
 </main>
 
 

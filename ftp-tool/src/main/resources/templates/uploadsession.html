@@ -85,6 +85,16 @@
             </div>
         </div>
     </a>
+    <a th:href="@{/getsessiondetail}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+        <img src="images/information-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div>
+                <h6 class="mb-0">Get Upload Session Details</h6>
+                <p class="mb-0 opacity-75">Retrieve the details of an active upload session.
+                    Admin users can get details for all sessions, while non-Admin users can only get details for sessions if they are the owner.</p>
+            </div>
+        </div>
+    </a>
     <a th:href="@{/abortsession}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
         <img src="images/trash-bin-outline.svg" width="32" height="32">
         <div class="d-flex gap-2 w-100 justify-content-between">

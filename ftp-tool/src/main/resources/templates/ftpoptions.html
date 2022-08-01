@@ -68,6 +68,16 @@
 </div>
 <div class="list-group w-auto">
 
+
+    <a th:href="@{/listftp}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+        <img src="images/list-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div>
+                <h6 class="mb-0">List Items at a Path</h6>
+                <p class="mb-0 opacity-75">Return a list of files and folders for the specified path. Paths are different for Admin users (Vault Owners and System Admins) and non-Admin users.</p>
+            </div>
+        </div>
+    </a>
     <a th:href="@{/createftp}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
         <img src="images/add-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -83,15 +93,6 @@
             <div>
                 <h6 class="mb-0">Delete File or Folder</h6>
                 <p class="mb-0 opacity-75">Delete an individual file or folder from the file staging server.</p>
-            </div>
-        </div>
-    </a>
-    <a th:href="@{/listftp}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-        <img src="images/list-circle-outline.svg" width="32" height="32" class="rounded-circle flex-shrink-0">
-        <div class="d-flex gap-2 w-100 justify-content-between">
-            <div>
-                <h6 class="mb-0">List Items at a Path</h6>
-                <p class="mb-0 opacity-75">Return a list of files and folders for the specified path. Paths are different for Admin users (Vault Owners and System Admins) and non-Admin users.</p>
             </div>
         </div>
     </a>
