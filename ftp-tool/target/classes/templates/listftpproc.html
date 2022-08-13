@@ -92,11 +92,63 @@
 <div class="px-4 py-5 my-5 text-center">
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">File Staging Items</h1>
+    <h3>Current Path: </h3> <h3 id="element"> <span th:text="${val}"></span></h3>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
         Create Item
     </button>
 
     <!-- Modal -->
+
+    <p>  </p>
+    <script>
+
+            let input = document.getElementById("element").children;
+
+            if (input[0].innerText.length == 0){
+                input[0].innerText = "/";
+            }
+    </script>
+
+    <div class="modal fade" id="listModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="listModalLabel">List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/listftpproc}" th:object="${listFTP}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">List File or Folder</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{itemPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftp_path">
+                                <label for="ftp_path">File Staging Server File Path</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="flexCheck" th:field="*{recursive}" checked>
+                                <label class="form-check-label" for="flexCheck">
+                                    Recursive Directory Listing
+                                </label>
+                            </div>
+
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit">List</button>
+                            </div>
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -134,10 +186,15 @@
                             </div>
 
                             <div class="form-floating">
-                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
+                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"   class="form-control" id="ftppath">
                                 <label for="ftppath">File Staging Server File Path</label>
                             </div>
-
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="flexCheckCheck" th:field="*{overwrite}" checked>
+                                <label class="form-check-label" for="flexCheckCheck">
+                                    Overwrite
+                                </label>
+                            </div>
 
                             <div>
                                 <button class="w-100 btn btn-lg btn-primary" type="submit">Create</button>
@@ -178,6 +235,14 @@
                                 <input type="text" th:field="*{newParent}" placeholder="Parent Directory"  class="form-control" id="dir">
                                 <label for="dir">Parent Directory</label>
                             </div>
+<!--                            <div class="input-group mb-3">-->
+<!--                                <label class="input-group-text" for="inputGroupSelect02">Parent Directory</label>-->
+<!--                                <select th:field="*{newParent}" class="form-select" id="inputGroupSelect02">-->
+<!--                                    <option th:each="dir : ${directoryList}"-->
+<!--                                            th:value="${dir}"-->
+<!--                                            th:text="${dir}">Directory Path</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
                             <div class="form-floating">
                                 <input type="text" th:field="*{newName}" placeholder="Filename"  class="form-control" id="filename">
                                 <label for="filename">Filename</label>
@@ -249,7 +314,9 @@
             <tr th:each="item : ${response}" th:class="${itemStat.index}">
                 <td th:text="${item.getName()}">Name</td>
                 <td th:text="${item.getKind()}">Kind</td>
-                <td th:text="${item.getPath()}">Path</td>
+                <td>
+                    <a href="#" th:text="${item.getPath()}" onclick="passList(this)" data-bs-toggle="modal" data-bs-target="#listModal"></a>
+                </td>
                 <td th:text="${item.getSize()}">Size</td>
 <!--                <td>-->
 <!--                    <a th:href="@{/deleteftp}">-->
@@ -274,9 +341,7 @@
 
             </tr>
         </table>
-        <p>
 
-        </p>
         <script>
             function passPath(that){
                 let val = that.parentElement.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling;
@@ -289,21 +354,29 @@
                 } else if (that.innerText == "Create File"){
                     if (val.previousElementSibling.innerText == "folder"){
                         let input = document.getElementById("ftppath");
-                        input.value = val.innerText;
+                        input.value = val.innerText + "/{filename}";
 
                     } else {
-                        alert('Only can create file in folder.')
+                        let input = document.getElementById("ftppath");
+                        input.value = val.innerText
+                        document.getElementById("flexCheckCheck").checked = true;
                     }
                 }
 
 
+            }
+
+
+
+            function passList(that){
+                document.getElementById("ftp_path").value = that.innerText;
             }
         </script>
 
 
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a class="btn btn-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
-            <a class="btn btn-secondary" th:href="@{/listftp}">List Other</a>
+            <a class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#listModal">List Other</a>
         </div>
     </div>
 </div>

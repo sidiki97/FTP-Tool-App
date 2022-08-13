@@ -69,10 +69,13 @@
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">Update Successful</h1>
     <div class="col-lg-6 mx-auto">
-        <p class="lead mb-4">File Info Goes here.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a class="btn btn-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
-            <a class="btn btn-secondary" th:href="@{/deleteftp}">Update More</a>
+            <label class="lead mb-4">Job Id: </label>
+            <label class="lead mb-4" th:text="${jobId}">Id</label>
+        </div>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a class="btn btn-outline-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
+            <a class="btn btn-outline-warning" th:href="@{/listftp}">Directory Listing</a>
         </div>
     </div>
 </div>

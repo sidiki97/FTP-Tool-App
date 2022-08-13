@@ -67,6 +67,97 @@
 <div class="px-4 py-5 my-5 text-center">
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">Active Upload Sessions</h1>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+        Create Item
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">Create</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/createRUSproc}" th:object="${newUS}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Create Resumable Upload Session</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{fileStagingPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
+                                <label for="ftppath">File Staging Server File Path</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">File for Upload Session</label>
+                                <input class="form-control" type="file" id="formFile">
+                            </div>
+                            <div class="form-floating">
+                                <input type="number" th:field="*{fileSize}" readonly="true"  class="form-control" id="filesize">
+                                <label for="filesize">File Size</label>
+                            </div>
+
+                            <script>
+                              const inputElement = document.getElementById("formFile");
+                              inputElement.addEventListener("change", handleFiles, false);
+                              function handleFiles() {
+                                var file = this.files[0];
+                                var sizeElement = document.getElementById("filesize");
+                                sizeElement.value = file.size;
+                              }
+                            </script>
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit">Create</button>
+                            </div>
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="abortModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Abort</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/abortsessionproc}" th:object="${abortId}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Abort Upload Session</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="abortsessId">
+                                <label for="abortsessId">Session ID</label>
+                            </div>
+
+                            <div>
+                                <button class="btn btn-danger" type="submit">Abort</button>
+                            </div>
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mx-auto">
         <table class="table table-hover">
             <tr>
@@ -82,7 +173,7 @@
             </tr>
             <tr th:each="item : ${data}">
                 <td th:text="${item.getPath()}">Path</td>
-                <td th:text="${item.getId()}">Id</td>
+                <td th:text="${item.getId()}">ID</td>
                 <td th:text="${item.getExpirationDate()}">Expiration Date</td>
                 <td th:text="${item.getCreatedDate()}">Created Date</td>
                 <td th:text="${item.getLastUploadedDate()}">Last Uploaded Date</td>
@@ -90,14 +181,46 @@
                 <td th:text="${item.getUploadedParts()}">Uploaded Parts</td>
                 <td th:text="${item.getSize()}">Size</td>
                 <td th:text="${item.getUploaded()}">Uploaded</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary">Actions</button>
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+
+<!--                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#updateModal">Upload</a></li>-->
+<!--                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#createModal">Commit</a></li>-->
+<!--                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#createModal">List Parts</a></li>-->
+<!--                            <li><hr class="dropdown-divider"></li>-->
+                            <li><a class="btn btn-danger" onclick="passPath(this)"  data-bs-toggle="modal" data-bs-target="#abortModal">Abort</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
         </table>
+        <script>
+            function passPath(that){
+                let rowE = that.parentElement.parentElement.parentElement.parentElement
+                for (var i = 0; i < 8; i++){
+                    rowE = rowE.previousElementSibling;
+                }
+                if (that.innerText == "Abort"){
+                    let input = document.getElementById("abortsessId");
+                    input.value = rowE.innerText;
+                }
+
+
+
+            }
+        </script>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a class="btn btn-primary" th:href="@{/uploadsession}">Upload Session APIs</a>
-            <a class="btn btn-secondary" th:href="@{/listUS}">Refresh List</a>
+            <a class="btn btn-outline-warning" th:href="@{/listUS}">Refresh List</a>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
 </body>
 </html>
