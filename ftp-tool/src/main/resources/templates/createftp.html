@@ -102,7 +102,12 @@ add that to request
             <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
             <label for="ftppath">File Staging Server File Path</label>
         </div>
-
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="flexCheckChecked" th:field="*{overwrite}" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Overwrite
+            </label>
+        </div>
 
         <div>
             <button class="w-100 btn btn-lg btn-primary" type="submit">Upload</button>
@@ -110,8 +115,9 @@ add that to request
 
 
     </form>
-    <div>
-        <a th:if="${errorMessage}"  class="btn btn-outline-warning" th:href="@{/listftp}"  >Back to Directory Listing</a>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a class="btn btn-outline-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
+        <a class="btn btn-outline-warning" th:href="@{/listftp}">Directory Listing</a>
     </div>
 </main>
 

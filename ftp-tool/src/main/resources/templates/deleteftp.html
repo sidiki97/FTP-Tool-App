@@ -89,8 +89,9 @@
         </div>
 
     </form>
-    <div>
-        <a th:if="${errorMessage}"  class="btn btn-outline-warning" th:href="@{/listftp}"  >Back to Directory Listing</a>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a class="btn btn-outline-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
+        <a class="btn btn-outline-warning" th:href="@{/listftp}">Directory Listing</a>
     </div>
 </main>
 

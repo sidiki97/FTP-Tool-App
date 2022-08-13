@@ -79,6 +79,9 @@
             <input type="text" th:field="*{newParent}" placeholder="Parent Directory"  class="form-control" id="dir">
             <label for="dir">Parent Directory</label>
         </div>
+
+
+
         <div class="form-floating">
             <input type="text" th:field="*{newName}" placeholder="Filename"  class="form-control" id="file">
             <label for="file">Filename</label>
@@ -90,8 +93,9 @@
 
 
     </form>
-    <div>
-        <a th:if="${errorMessage}"  class="btn btn-outline-warning" th:href="@{/listftp}"  >Back to Directory Listing</a>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a class="btn btn-outline-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
+        <a class="btn btn-outline-warning" th:href="@{/listftp}">Directory Listing</a>
     </div>
 </main>
 

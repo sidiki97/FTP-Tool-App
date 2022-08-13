@@ -56,9 +56,8 @@ public class Services {
 
         FileStagingItemResponse fileStagingItemResponse = vaultClient.newRequest(FileStagingRequest.class)
                 .setInputPath(createFTP.getInputPath())
+                .setOverwrite(createFTP.getOverwrite())
                 .createFolderOrFile(kindMap.get(createFTP.getKind()), createFTP.getFtpPath());
-
-        //TODO: ask to overwrite
 
         return fileStagingItemResponse;
 
@@ -84,7 +83,7 @@ public class Services {
     public FileStagingItemBulkResponse listFTP(ListFTP listFTP, boolean initial){
 
         if (initial){
-            listFTP.setRecursive(true);
+            listFTP.setRecursive(false);
         }
         else if (listFTP.getRecursive() == null){
             listFTP.setRecursive(false);
@@ -198,6 +197,7 @@ public class Services {
     public VaultClientId getVaultClientId() {
         return vaultClientId;
     }
+
 
 
 

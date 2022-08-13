@@ -9,6 +9,7 @@ public class CreateFTP {
     private String inputPath;
     private String kind;
     private String ftpPath;
+    private Boolean overwrite;
 
 
     public String getInputPath() {
@@ -23,6 +24,10 @@ public class CreateFTP {
         return ftpPath;
     }
 
+    public Boolean getOverwrite() {
+        return overwrite;
+    }
+
     public void setFtpPath(String ftpPath) {
         this.ftpPath = ftpPath;
     }
@@ -35,4 +40,7 @@ public class CreateFTP {
         this.kind = kind;
     }
 
+    public void setOverwrite(Boolean overwrite) {
+        this.overwrite = overwrite;
+    }
 }

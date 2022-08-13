@@ -1,5 +1,6 @@
 package com.vault.ftp.ftptool.Controllers;
 
+import com.vault.ftp.ftptool.Database.ParentDirectoryRepo;
 import com.vault.ftp.ftptool.Models.*;
 import com.vault.ftp.ftptool.Service.Services;
 import com.veeva.vault.vapil.api.model.response.*;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 Issues Noticed:
@@ -37,7 +40,11 @@ public class HomeController {
     @Autowired
     private Services services;
 
+    @Autowired
+    private ParentDirectoryRepo repo;
+
     private boolean initial = true;
+
 
     @GetMapping
     public String homePage(){
@@ -82,7 +89,6 @@ public class HomeController {
 
     @GetMapping("/createftp")
     public String createFTP(Model model){
-        // Add option of adding either file or folder
         CreateFTP createFTP = new CreateFTP();
         model.addAttribute("createFTP",createFTP);
         return "createftp";
@@ -90,7 +96,7 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/createftpproc")
     public String ftpCreateProc(@ModelAttribute CreateFTP createFTP, Model model) {
-
+        initial = true;
         try
         {
 
@@ -134,6 +140,7 @@ public class HomeController {
             return "deleteftp";
         }
         model.addAttribute("jobId", fileStagingJobResponse.getData().getJobId());
+        initial = true;
         return "deleteftpproc";
     }
 
@@ -141,20 +148,26 @@ public class HomeController {
     public String listFTP(Model model){
         if (initial){
             initial = false;
-            FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(new ListFTP(), true);
+            ListFTP initialList = new ListFTP();
+
+            FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(initialList, true);
             model.addAttribute("createFTP",new CreateFTP());
             model.addAttribute("item", new UpdateFTP());
             model.addAttribute("deleteFTP", new DeleteFTP());
+            model.addAttribute("listFTP", new ListFTP());
             model.addAttribute("response",fileStagingItemBulkResponse.getData());
+
+
             return "listftpproc";
         }
-        ListFTP listFTP = new ListFTP();
-        model.addAttribute("listFTP",listFTP);
+
+        model.addAttribute("listFTP",new ListFTP());
         return "listftp";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/listftpproc")
-    public String ftpListProc(@ModelAttribute ListFTP listFTP, Model model){
+    public String ftpListProc(@ModelAttribute("listFTP") ListFTP listFTP, Model model){
+
 
         FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP, false);
 
@@ -162,20 +175,31 @@ public class HomeController {
             model.addAttribute("errorMessage", fileStagingItemBulkResponse.getErrors().get(0).getMessage());
             return "listftp";
         }
+
+        model.addAttribute("val", listFTP.getItemPath());
         model.addAttribute("createFTP",new CreateFTP());
         model.addAttribute("item", new UpdateFTP());
         model.addAttribute("deleteFTP", new DeleteFTP());
+        model.addAttribute("listFTP", new ListFTP());
         model.addAttribute("response",fileStagingItemBulkResponse.getData());
+//        model.addAttribute("directoryList", sortDir(fileStagingItemBulkResponse.getData()));
+
+
+
         return "listftpproc";
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/initiallist")
-    public String intialListProc(Model model){
-        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(new ListFTP(), true);
+//    public List<String> sortDir(List<FileStagingItemBulkResponse.FileStagingItem> items){
+//        List<String> paths = new ArrayList<>();
+//        for (int i = 0; i < items.size(); i++) {
+//            if (items.get(i).getKind().equals("folder")) {
+//                paths.add(items.get(i).getPath());
+//            }
+//        }
+//
+//        return paths;
+//    }
 
-        model.addAttribute("response",fileStagingItemBulkResponse.getData());
-        return "initiallist";
-    }
 
     // Unable to retrieve item content with API
 //    @GetMapping("/getitem")
@@ -216,6 +240,8 @@ public class HomeController {
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
             return "updateitem";
         }
+        model.addAttribute("jobId", response.getData().getJobId());
+        initial = true;
         return "updateitemproc";
 
 
@@ -321,6 +347,8 @@ public class HomeController {
     public String listUploadSessions(Model model){
         FileStagingSessionBulkResponse response = services.listUS();
         model.addAttribute("data", response.getData());
+        model.addAttribute("newUS", new CreateResumableUS());
+        model.addAttribute("abortId",new UploadSession());
         return "listUS";
     }
 
@@ -356,6 +384,24 @@ public class HomeController {
         model.addAttribute("data", response.getData());
         return "sessiondetail";
     }
+
+    @GetMapping("/listfileparts")
+    public String getFileParts(Model model){
+        model.addAttribute("sessId",new UploadSession());
+        return "listfileparts";
+    }
+
+    @PostMapping("/listfiledetail")
+    public String fileParts(@ModelAttribute("sessId") UploadSession uploadSession, Model model) {
+        FileStagingSessionResponse response = services.getUSDetails(uploadSession);
+        if (response.hasErrors()){
+            model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
+            return "listfileparts";
+        }
+        model.addAttribute("data", response.getData());
+        return "listfiledetail";
+    }
+
 
     @GetMapping("/error")
     public String error(Model model){
