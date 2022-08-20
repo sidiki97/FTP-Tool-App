@@ -17,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -47,6 +49,30 @@ public class Services {
     }
 
     //TODO: Add check valid session to prevent access to other ftp pages
+
+    public String getUrl(){
+        return vaultClient.getVaultUrl();
+    }
+
+    public String getDNS(){
+        return vaultClient.getVaultDNS();
+    }
+
+    public String getUsername(){
+        return vaultClient.getUsername();
+    }
+
+    public List<AuthenticationResponse.Vault> getUrls(){
+        List<AuthenticationResponse.Vault> vaultAuths = vaultClient.getAuthenticationResponse().getVaultIds();
+
+
+//        for(AuthenticationResponse.Vault auth : vaultAuths){
+//            auth.setUrl(auth.getUrl().substring(8, auth.getUrl().length() - 4));
+//        }
+
+        return vaultAuths;
+    }
+
 
     public FileStagingItemResponse createFTP(CreateFTP createFTP){
 

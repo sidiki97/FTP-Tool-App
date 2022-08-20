@@ -1,10 +1,8 @@
 package com.vault.ftp.ftptool.Controllers;
 
-import com.vault.ftp.ftptool.Database.ParentDirectoryRepo;
 import com.vault.ftp.ftptool.Models.*;
 import com.vault.ftp.ftptool.Service.Services;
 import com.veeva.vault.vapil.api.model.response.*;
-import com.veeva.vault.vapil.api.request.FileStagingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,52 +38,64 @@ public class HomeController {
     @Autowired
     private Services services;
 
-    @Autowired
-    private ParentDirectoryRepo repo;
-
     private boolean initial = true;
 
+    private String prevList;
 
     @GetMapping
     public String homePage(){
         return "home";
     }
 
+
+
     @GetMapping("/auth")
     public String authPage(Model model){
-        // TODO: Add Validation before submit
+
         model.addAttribute("auth", new Authentication());
+
         return "auth";
     }
 
 
 
     @RequestMapping(method = RequestMethod.POST, value = "/auth")
-    public String authProc(@ModelAttribute("auth") @Valid Authentication auth, BindingResult result, Model model){
+    public String authProc(@ModelAttribute("auth") Authentication auth,  Model model){
 
-        if (result.hasErrors()){
-            return "auth";
-        }
 
         try{
             AuthenticationResponse response = services.authenticate(auth);
             if (response.hasErrors()){
                 model.addAttribute("errorMessage",response.getErrors().get(0).getMessage());
-                return "home";
+                return "auth";
             }
+
+            model.addAttribute("url", services.getUrl());
+            model.addAttribute("vault_dns", services.getDNS());
+            List<AuthenticationResponse.Vault> urls = services.getUrls();
+            model.addAttribute("urls", urls);
             return "ftpoptions";
+
         } catch (NullPointerException e){
             model.addAttribute("errorMessage", "DNS not recognized");
-            return "home";
+            return "auth";
         }
 
     }
 
     @GetMapping("/ftpoptions")
-    public String ftpOptions(){
+    public String ftpOptions(Model model){
         initial = true;
+        prevList = "/";
+        List<AuthenticationResponse.Vault> urls = services.getUrls();
+        model.addAttribute("urls", urls);
+        model.addAttribute("url", services.getUrl());
+        model.addAttribute("vault_dns", services.getDNS());
+        model.addAttribute("auth", new Authentication());
+
         return "ftpoptions";
     }
+
 
     @GetMapping("/createftp")
     public String createFTP(Model model){
@@ -112,7 +122,8 @@ public class HomeController {
                 model.addAttribute("size", fileStagingItemResponse.getData().getSize());
                 model.addAttribute("md5", fileStagingItemResponse.getData().getFileContentMd5());
             }
-
+//            model.addAttribute("size", fileStagingItemResponse.getData().getSize());
+//            model.addAttribute("md5", fileStagingItemResponse.getData().getFileContentMd5());
 
             return "createftpproc";
         }
@@ -124,6 +135,11 @@ public class HomeController {
 
     }
 
+    @PostMapping("/delete")
+    public void delete(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP){
+        deleteFTP.setRecursive(true);
+        FileStagingJobResponse fileStagingJobResponse = services.deleteFTP(deleteFTP);
+    }
 
     @GetMapping("/deleteftp")
     public String deleteFTP(Model model){
@@ -175,7 +191,7 @@ public class HomeController {
             model.addAttribute("errorMessage", fileStagingItemBulkResponse.getErrors().get(0).getMessage());
             return "listftp";
         }
-
+        prevList = listFTP.getItemPath();
         model.addAttribute("val", listFTP.getItemPath());
         model.addAttribute("createFTP",new CreateFTP());
         model.addAttribute("item", new UpdateFTP());
@@ -184,9 +200,25 @@ public class HomeController {
         model.addAttribute("response",fileStagingItemBulkResponse.getData());
 //        model.addAttribute("directoryList", sortDir(fileStagingItemBulkResponse.getData()));
 
+        return "listftpproc";
+    }
+
+    @GetMapping("/prevlistftp")
+    public String prevlistFTP(Model model){
+        ListFTP priorList = new ListFTP();
+        priorList.setItemPath(prevList);
+        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(priorList, true);
+        model.addAttribute("val", prevList);
+        model.addAttribute("createFTP",new CreateFTP());
+        model.addAttribute("item", new UpdateFTP());
+        model.addAttribute("deleteFTP", new DeleteFTP());
+        model.addAttribute("listFTP", new ListFTP());
+        model.addAttribute("response",fileStagingItemBulkResponse.getData());
 
 
         return "listftpproc";
+
+
     }
 
 //    public List<String> sortDir(List<FileStagingItemBulkResponse.FileStagingItem> items){
