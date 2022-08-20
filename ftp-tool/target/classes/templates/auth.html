@@ -71,27 +71,26 @@
            method="post">
         <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Authentication</h1>
-
+        <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
         <div class="form-floating">
-            <input type="text" th:field="*{userName}" placeholder="Username" class="form-control" id="floatingInput">
+            <input type="text" th:field="*{userName}" placeholder="Username" class="form-control" id="floatingInput" required>
             <label for="floatingInput">Username</label>
-            <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" />
         </div>
         <div class="form-floating">
-            <input type="password" th:field="*{passWord}"  class="form-control" id="floatingPassword" placeholder="Password">
+            <input type="password" th:field="*{passWord}"  class="form-control" id="floatingPassword" placeholder="Password" required>
             <label for="floatingPassword">Password</label>
-            <p th:if="${#fields.hasErrors('passWord')}" th:errors="*{passWord}" />
         </div>
         <div class="form-floating">
-            <input type="text" th:field="*{vaultDNS}"  class="form-control" id="floatingDNS" placeholder="Vault DNS">
+            <input type="text" th:field="*{vaultDNS}"  class="form-control" id="floatingDNS" placeholder="Vault DNS" required>
             <label for="floatingDNS">Vault DNS</label>
-            <p th:if="${#fields.hasErrors('vaultDNS')}" th:errors="*{vaultDNS}" /><br>
         </div>
 
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button><br>
 
     </form>
+
+
 </main>
 
 

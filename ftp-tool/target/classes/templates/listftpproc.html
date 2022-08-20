@@ -93,11 +93,25 @@
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">File Staging Items</h1>
     <h3>Current Path: </h3> <h3 id="element"> <span th:text="${val}"></span></h3>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
-        Create Item
-    </button>
+
 
     <!-- Modal -->
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal" onclick="passVal()">
+            Create Item
+        </button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-warning">Bulk Options</button>
+            <button type="button" class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" >Bulk Update</a></li>
+                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deletelistModal" onclick="addlist()">Bulk Delete</a></li>
+            </ul>
+        </div>
+    </div>
+
 
     <p>  </p>
     <script>
@@ -107,7 +121,40 @@
             if (input[0].innerText.length == 0){
                 input[0].innerText = "/";
             }
+
+            function passVal(){
+                if (input[0].innerText.length == 0 || input[0].innerText.length == 1){
+                    document.getElementById("ftppath").value = input[0].innerText + "{filename}";
+                }
+                else {
+                    document.getElementById("ftppath").value = input[0].innerText + "/{filename}";
+
+                }
+
+            }
     </script>
+
+    <div class="modal fade" id="deletelistModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Bulk Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div>
+                    <table id="deletetable" class="table table-hover">
+                        <tr>
+                            <th>PATH</th>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="listModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -301,17 +348,36 @@
             </div>
         </div>
     </div>
+    <form id="deleteform" action="#" th:action="@{/delete}" th:object="${deleteFTP}"
+           method="post" hidden>
+
+        <div class="form-floating">
+            <input type="text" th:field="*{ftpPath}" class="form-control" id="deletepath" required>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="checkRec" th:field="*{recursive}" checked>
+        </div>
+        <div>
+            <button class="btn btn-danger" type="submit">Delete</button>
+        </div>
+
+    </form>
 
     <div class="col-lg-6 mx-auto">
 
-        <table class="table table-hover">
+        <table id="checktable" class="table table-hover">
             <tr>
+                <th><input id="master_check" class="form-check-input mt-0" type="checkbox" aria-label="Checkbox for following text input">
+                </th>
                 <th>NAME</th>
                 <th>KIND</th>
                 <th>PATH</th>
                 <th>SIZE</th>
             </tr>
             <tr th:each="item : ${response}" th:class="${itemStat.index}">
+                <td id="first">
+                    <input class="form-check-input mt-0" type="checkbox" value="" aria-label="Checkbox for following text input">
+                </td>
                 <td th:text="${item.getName()}">Name</td>
                 <td th:text="${item.getKind()}">Kind</td>
                 <td>
@@ -341,8 +407,57 @@
 
             </tr>
         </table>
-
         <script>
+
+            let listtable = document.getElementById("checktable");
+
+
+
+            let rows = listtable.rows;
+
+            let deleteArray = [];
+
+            let check = document.getElementById("master_check");
+
+            check.addEventListener('change', (event) => {
+            if (check.checked){
+                let next = check.parentElement.parentElement.nextElementSibling;
+                while (next != null){
+                    next.children[0].children[0].checked = true;
+                    next = next.nextElementSibling;
+                }
+            }
+            });
+
+            function addlist(){
+                deleteArray = []
+                deletetable = document.getElementById("deletetable");
+                if (deletetable.rows.length > 1){
+                    let l = deletetable.rows.length;
+                    for (var d = 1; d < l; d++){
+                        deletetable.deleteRow(-1);
+                    }
+                }
+
+                for (var r = 1; r < rows.length; r++){
+                    if (rows[r].children[0].children[0].checked){
+                        deleteArray.push(rows[r].children[3].children[0].innerText);
+                    }
+                }
+
+
+                deleteArray.forEach( element =>
+                    deletetable.insertRow(-1).insertCell(-1).innerText = element
+
+                );
+
+            }
+
+
+
+
+
+
             function passPath(that){
                 let val = that.parentElement.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling;
                 if (that.innerText == "Delete"){
