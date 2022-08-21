@@ -106,7 +106,7 @@
                 <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" >Bulk Update</a></li>
+                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#updatelistModal" onclick="addUpdatelist()">Bulk Update</a></li>
                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deletelistModal" onclick="addlist()">Bulk Delete</a></li>
             </ul>
         </div>
@@ -149,6 +149,36 @@
                     </table>
 
                 </div>
+                <button class="btn btn-danger" type="submit" onclick="bulkDelete()">Delete</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updatelistModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updatModalLabel">Confirm Bulk Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div>
+                    <table id="updatetable" class="table table-hover">
+                        <tr>
+                            <th>PATH</th>
+                        </tr>
+                    </table>
+                    <div class="form-floating">
+                        <input type="text" placeholder="Parent Directory"  class="form-control" id="parentdir">
+                        <label for="dir">Parent Directory</label>
+                    </div>
+
+
+                </div>
+<!--                <button class="btn btn-danger" type="submit" onclick="bulkDelete()">Delete</button>-->
+                <button class="w-100 btn btn-lg btn-primary" onclick="bulkUpdate()" type="submit">Update</button>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
@@ -348,17 +378,26 @@
             </div>
         </div>
     </div>
+
     <form id="deleteform" action="#" th:action="@{/delete}" th:object="${deleteFTP}"
            method="post" hidden>
 
-        <div class="form-floating">
+        <div>
             <input type="text" th:field="*{ftpPath}" class="form-control" id="deletepath" required>
         </div>
-        <div class="form-check">
+        <div>
             <input class="form-check-input" type="checkbox" id="checkRec" th:field="*{recursive}" checked>
         </div>
+
+    </form>
+
+    <form id="updateform"  action="#" th:action="@{/update}" th:object="${item}"
+           method="post" hidden>
         <div>
-            <button class="btn btn-danger" type="submit">Delete</button>
+            <input id="fpath" type="text" th:field="*{path}">
+        </div>
+        <div>
+            <input type="text" th:field="*{newParent}" placeholder="Parent Directory" id="parent">
         </div>
 
     </form>
@@ -417,6 +456,8 @@
 
             let deleteArray = [];
 
+            let updateArray = [];
+
             let check = document.getElementById("master_check");
 
             check.addEventListener('change', (event) => {
@@ -429,8 +470,32 @@
             }
             });
 
+            function addUpdatelist(){
+                updateArray = [];
+
+                updatetable = document.getElementById("updatetable");
+                if (updatetable.rows.length > 1){
+                    let l = updatetable.rows.length;
+                    for (var d = 1; d < l; d++){
+                        updatetable.deleteRow(-1);
+                    }
+                }
+
+                for (var r = 1; r < rows.length; r++){
+                    if (rows[r].children[0].children[0].checked){
+                        updateArray.push(rows[r].children[3].children[0].innerText);
+                    }
+                }
+
+                updateArray.forEach( element =>
+                    updatetable.insertRow(-1).insertCell(-1).innerText = element
+
+                );
+            }
+
             function addlist(){
-                deleteArray = []
+                deleteArray = [];
+
                 deletetable = document.getElementById("deletetable");
                 if (deletetable.rows.length > 1){
                     let l = deletetable.rows.length;
@@ -453,8 +518,25 @@
 
             }
 
+            function bulkUpdate(){
+                let updateform = document.getElementById("updateform");
+
+                document.getElementById("fpath").value = updateArray.join();
+                document.getElementById("parent").value = document.getElementById("parentdir").value
+
+                updateform.submit();
+
+            }
 
 
+            function bulkDelete(){
+                let deleteform = document.getElementById("deleteform");
+
+                document.getElementById("deletepath").value = deleteArray.join();
+
+                deleteform.submit();
+
+            }
 
 
 
