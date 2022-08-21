@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -136,9 +137,49 @@ public class HomeController {
     }
 
     @PostMapping("/delete")
-    public void delete(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP){
-        deleteFTP.setRecursive(true);
-        FileStagingJobResponse fileStagingJobResponse = services.deleteFTP(deleteFTP);
+    public String delete(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP, Model model){
+
+        String paths = deleteFTP.getFtpPath();
+        List<String> pathArray = Arrays.asList(paths.split(","));
+
+        for (String s : pathArray) {
+            deleteFTP.setFtpPath(s);
+            deleteFTP.setRecursive(true);
+            FileStagingJobResponse response = services.deleteFTP(deleteFTP);
+        }
+
+        model.addAttribute("paths", pathArray);
+
+        return "delete";
+
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute("item") UpdateFTP updateFTP, Model model) throws InterruptedException{
+
+        String paths = updateFTP.getPath();
+        List<String> pathArray = Arrays.asList(paths.split(","));
+        String parent = updateFTP.getNewParent();
+
+        for (String s : pathArray) {
+
+            updateFTP.setPath(s);
+            updateFTP.setNewParent(parent);
+            FileStagingJobResponse response = services.updateItemFTP(updateFTP);
+            if (response.isSuccessful()){
+                Thread.sleep(1000);
+            }
+            if (response.hasErrors()){
+                model.addAttribute("paths", pathArray);
+                return "failedupdate";
+            }
+
+        }
+
+        model.addAttribute("paths", pathArray);
+
+        return "update";
+
     }
 
     @GetMapping("/deleteftp")
