@@ -84,29 +84,49 @@ public class HomeController {
 
     }
 
+
     @GetMapping("/ftpoptions")
     public String ftpOptions(Model model){
+
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         initial = true;
         prevList = "/";
+
+        addNav(model);
+
+        return "ftpoptions";
+    }
+
+    public void addNav(Model model){
         List<AuthenticationResponse.Vault> urls = services.getUrls();
         model.addAttribute("urls", urls);
         model.addAttribute("url", services.getUrl());
         model.addAttribute("vault_dns", services.getDNS());
         model.addAttribute("auth", new Authentication());
-
-        return "ftpoptions";
     }
-
 
     @GetMapping("/createftp")
     public String createFTP(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
         CreateFTP createFTP = new CreateFTP();
+
         model.addAttribute("createFTP",createFTP);
         return "createftp";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createftpproc")
     public String ftpCreateProc(@ModelAttribute CreateFTP createFTP, Model model) {
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
         initial = true;
         try
         {
@@ -138,7 +158,10 @@ public class HomeController {
 
     @PostMapping("/delete")
     public String delete(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP, Model model){
-
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
         String paths = deleteFTP.getFtpPath();
         List<String> pathArray = Arrays.asList(paths.split(","));
 
@@ -156,6 +179,10 @@ public class HomeController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute("item") UpdateFTP updateFTP, Model model) throws InterruptedException{
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
 
         String paths = updateFTP.getPath();
         List<String> pathArray = Arrays.asList(paths.split(","));
@@ -184,6 +211,11 @@ public class HomeController {
 
     @GetMapping("/deleteftp")
     public String deleteFTP(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         DeleteFTP deleteFTP = new DeleteFTP();
         model.addAttribute("deleteFTP",deleteFTP);
         return "deleteftp";
@@ -191,6 +223,11 @@ public class HomeController {
 
     @PostMapping("/deleteftpproc")
     public String ftpDeleteProc(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP, Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         FileStagingJobResponse fileStagingJobResponse = services.deleteFTP(deleteFTP);
         if (fileStagingJobResponse.hasErrors()){
             model.addAttribute("errorMessage", fileStagingJobResponse.getErrors().get(0).getMessage());
@@ -203,6 +240,11 @@ public class HomeController {
 
     @GetMapping("/listftp")
     public String listFTP(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         if (initial){
             initial = false;
             ListFTP initialList = new ListFTP();
@@ -224,7 +266,10 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/listftpproc")
     public String ftpListProc(@ModelAttribute("listFTP") ListFTP listFTP, Model model){
-
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
 
         FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP, false);
 
@@ -246,6 +291,11 @@ public class HomeController {
 
     @GetMapping("/prevlistftp")
     public String prevlistFTP(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         ListFTP priorList = new ListFTP();
         priorList.setItemPath(prevList);
         FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(priorList, true);
@@ -300,6 +350,11 @@ public class HomeController {
 
     @GetMapping("/updateitem")
     public String updateItemFTP(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         UpdateFTP updateFTP = new UpdateFTP();
         model.addAttribute("item", updateFTP);
         return "updateitem";
@@ -307,6 +362,10 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateitemproc")
     public String ftpUpdateItemProc(@ModelAttribute("item") UpdateFTP updateFTP, Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
 
         FileStagingJobResponse response = services.updateItemFTP(updateFTP);
         if (response.hasErrors()){
@@ -328,19 +387,34 @@ public class HomeController {
      */
 
     @GetMapping("/uploadsession")
-    public String uploadSess(){
-        // TODO: Add option to go back to File Staging APIs
+    public String uploadSess(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
+        addNav(model);
         return "uploadsession";
     }
 
+    // TODO: Must ensure '/' added to file staging path for successful upload
     @GetMapping("/createRUS")
     public String createRUS(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         model.addAttribute("newUS", new CreateResumableUS());
         return "createRUS";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createRUSproc")
     public String createRUSproc(@ModelAttribute("newUS") CreateResumableUS resumableUS, Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
 
         FileStagingSessionResponse fileStagingSessionResponse = services.createRUS(resumableUS);
         if (fileStagingSessionResponse.hasErrors()){
@@ -353,12 +427,22 @@ public class HomeController {
 
     @GetMapping("/uploadRUS")
     public String uploadRUS(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         model.addAttribute("uploadUS", new UploadSessionFile());
         return "uploadRUS";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/uploadRUSproc")
     public String uploadRUSproc(@ModelAttribute("uploadUS") UploadSessionFile sessionFile, Model model) throws IOException {
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         Path path = Paths.get(sessionFile.getFilePath());
         byte[] fileContent = Files.readAllBytes(path);
 
@@ -418,6 +502,11 @@ public class HomeController {
 
     @GetMapping("/listUS")
     public String listUploadSessions(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         FileStagingSessionBulkResponse response = services.listUS();
         model.addAttribute("data", response.getData());
         model.addAttribute("newUS", new CreateResumableUS());
@@ -427,12 +516,22 @@ public class HomeController {
 
     @GetMapping("/abortsession")
     public String abortUploadSessionP(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         model.addAttribute("abortId",new UploadSession());
         return "abortsession";
     }
 
     @PostMapping("/abortsessionproc")
     public String abortSessionProc(@ModelAttribute("abortId") UploadSession uploadSession, Model model) {
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         VaultResponse response = services.deleteUS(uploadSession);
         if (response.hasErrors()){
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
@@ -443,12 +542,22 @@ public class HomeController {
 
     @GetMapping("/getsessiondetail")
     public String getUploadSession(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         model.addAttribute("sessId",new UploadSession());
         return "getsessiondetail";
     }
 
     @PostMapping("/sessiondetail")
     public String uploadSession(@ModelAttribute("sessId") UploadSession uploadSession, Model model) {
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         FileStagingSessionResponse response = services.getUSDetails(uploadSession);
         if (response.hasErrors()){
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
@@ -460,12 +569,22 @@ public class HomeController {
 
     @GetMapping("/listfileparts")
     public String getFileParts(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         model.addAttribute("sessId",new UploadSession());
         return "listfileparts";
     }
 
     @PostMapping("/listfiledetail")
     public String fileParts(@ModelAttribute("sessId") UploadSession uploadSession, Model model) {
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
         FileStagingSessionResponse response = services.getUSDetails(uploadSession);
         if (response.hasErrors()){
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());

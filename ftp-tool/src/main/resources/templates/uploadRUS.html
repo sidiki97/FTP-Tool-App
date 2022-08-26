@@ -95,11 +95,12 @@
     <div>
       <button class="w-100 btn btn-lg btn-primary" type="submit">Upload</button>
     </div>
-    <div>
-      <a class="btn btn-outline-secondary" th:href="@{/uploadsession}" role="button">Upload Session APIs</a>
-    </div>
 
   </form>
+  <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+    <a class="btn btn-outline-primary" th:href="@{/uploadsession}">Upload Session APIs</a>
+    <a class="btn btn-outline-warning" th:href="@{/listUS}">List Upload Sessions</a>
+  </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>

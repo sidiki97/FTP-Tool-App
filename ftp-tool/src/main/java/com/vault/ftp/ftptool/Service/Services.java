@@ -58,6 +58,10 @@ public class Services {
         return vaultClient.getVaultDNS();
     }
 
+    public Boolean clientNull(){
+        return vaultClient == null;
+    }
+
     public String getUsername(){
         return vaultClient.getUsername();
     }
