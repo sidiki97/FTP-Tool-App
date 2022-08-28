@@ -242,7 +242,7 @@
                             <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputGroupSelect01">Kind</label>
-                                <select th:field="*{kind}" class="form-select" id="inputGroupSelect01" onchange="inputChange(this)">
+                                <select th:field="*{kind}" class="form-select" id="inputGroupSelect01" onchange="inputChange(this)" required>
                                     <option value="" selected>Please select kind: </option>
                                     <option id="file" value="File">File</option>
                                     <option value="Folder">Folder</option>
