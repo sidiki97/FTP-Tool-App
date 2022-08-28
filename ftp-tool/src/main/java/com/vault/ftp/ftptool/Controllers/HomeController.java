@@ -122,7 +122,7 @@ public class HomeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createftpproc")
-    public String ftpCreateProc(@ModelAttribute CreateFTP createFTP, Model model) {
+    public String ftpCreateProc(@ModelAttribute("createFTP") CreateFTP createFTP, Model model) {
         if (services.clientNull()){
             model.addAttribute("auth", new Authentication());
             return "auth";
@@ -511,6 +511,10 @@ public class HomeController {
         model.addAttribute("data", response.getData());
         model.addAttribute("newUS", new CreateResumableUS());
         model.addAttribute("abortId",new UploadSession());
+        model.addAttribute("uploadUS", new UploadSessionFile());
+        model.addAttribute("sessId",new UploadSession());
+        model.addAttribute("sessionId", new UploadSession());
+        model.addAttribute("commitId", new UploadSession());
         return "listUS";
     }
 
@@ -585,7 +589,7 @@ public class HomeController {
             return "auth";
         }
 
-        FileStagingSessionResponse response = services.getUSDetails(uploadSession);
+        FileStagingSessionBulkResponse response = services.getFileParts(uploadSession);
         if (response.hasErrors()){
             model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
             return "listfileparts";
@@ -594,6 +598,32 @@ public class HomeController {
         return "listfiledetail";
     }
 
+    @GetMapping("/commitsession")
+    public String sessionCommit(Model model){
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
+        model.addAttribute("commitId",new UploadSession());
+        return "commitsession";
+    }
+
+
+    @PostMapping("/commitsessionproc")
+    public String commitSessionProc(@ModelAttribute("commitId") UploadSession uploadSession, Model model) {
+        if (services.clientNull()){
+            model.addAttribute("auth", new Authentication());
+            return "auth";
+        }
+
+        FileStagingJobResponse response = services.commitUS(uploadSession);
+        if (response.hasErrors()){
+            model.addAttribute("errorMessage", response.getErrors().get(0).getMessage());
+            return "commitsession";
+        }
+        return "commitsessionproc";
+    }
 
     @GetMapping("/error")
     public String error(Model model){

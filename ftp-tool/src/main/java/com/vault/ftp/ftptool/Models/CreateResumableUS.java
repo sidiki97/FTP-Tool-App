@@ -4,6 +4,7 @@ public class CreateResumableUS {
     private int fileSize;
     private String fileStagingPath;
     private String filename;
+    private Boolean overwrite;
 
 
     public int getFileSize() {
@@ -18,6 +19,10 @@ public class CreateResumableUS {
         return fileStagingPath;
     }
 
+    public Boolean getOverwrite() {
+        return overwrite;
+    }
+
     public void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
@@ -30,4 +35,7 @@ public class CreateResumableUS {
         this.fileStagingPath = fileStagingPath;
     }
 
+    public void setOverwrite(Boolean overwrite) {
+        this.overwrite = overwrite;
+    }
 }

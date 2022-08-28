@@ -146,12 +146,9 @@ public class Services {
     }
 
     public FileStagingSessionResponse createRUS(CreateResumableUS createResumableUS){
-//        float fileSize = (float)createResumableUS.getFileSize();
-//        if (!((System.getProperty("os.name").substring(0,3)) == "Mac")){
-//            fileSize = (fileSize / (1024*1024)) * 1000 * 1000;
-//        }
-//        int actualFileSize = (int)fileSize;
+
         FileStagingSessionResponse fileStagingSessionResponse = vaultClient.newRequest(FileStagingRequest.class)
+                .setOverwrite(createResumableUS.getOverwrite())
                 .createResumableUploadSession(createResumableUS.getFileStagingPath(),createResumableUS.getFileSize());
 
         return fileStagingSessionResponse;
@@ -220,6 +217,20 @@ public class Services {
     public FileStagingSessionResponse getUSDetails(UploadSession uploadSession){
         FileStagingSessionResponse response = vaultClient.newRequest(FileStagingRequest.class)
                 .getUploadSessionDetails(uploadSession.getSessionId());
+
+        return response;
+    }
+
+    public FileStagingSessionBulkResponse getFileParts(UploadSession uploadSession){
+        FileStagingSessionBulkResponse response = vaultClient.newRequest(FileStagingRequest.class)
+                .listFilePartsUploadedToASession(uploadSession.getSessionId());
+
+        return response;
+    }
+
+    public FileStagingJobResponse commitUS(UploadSession uploadSession){
+        FileStagingJobResponse response = vaultClient.newRequest(FileStagingRequest.class)
+                .commitUploadSession(uploadSession.getSessionId());
 
         return response;
     }

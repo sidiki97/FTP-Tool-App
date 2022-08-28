@@ -263,7 +263,7 @@
                             </div>
 
                             <div class="form-floating">
-                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"   class="form-control" id="ftppath">
+                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"   class="form-control" id="ftppath" required>
                                 <label for="ftppath">File Staging Server File Path</label>
                             </div>
                             <div class="form-check">
@@ -305,7 +305,7 @@
                             <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
                             <div class="form-floating">
-                                <input id="path" type="text" th:field="*{path}" placeholder="File Staging Server File Path" class="form-control">
+                                <input id="path" type="text" th:field="*{path}" placeholder="File Staging Server File Path" class="form-control" required>
                                 <label for="path">File Staging Server File Path</label>
                             </div>
                             <div class="form-floating">

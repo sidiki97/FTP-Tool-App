@@ -75,20 +75,20 @@
     <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
     <div class="form-floating">
-      <input type="text" th:field="*{filePath}" placeholder="Local File Path"  class="form-control" id="path">
+      <input type="text" th:field="*{filePath}" placeholder="Local File Path"  class="form-control" id="path" required>
       <label for="path">Local File Path</label>
     </div>
 
     <div class="form-floating">
-      <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessId">
+      <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessId" required>
       <label for="sessId">Session ID</label>
     </div>
     <div class="form-floating">
-      <input type="text" th:field="*{filename}" placeholder="Local Filename"  class="form-control" id="filename">
+      <input type="text" th:field="*{filename}" placeholder="Local Filename"  class="form-control" id="filename" required>
       <label for="filename">Local Filename</label>
     </div>
     <div class="form-floating">
-      <input type="number" th:field="*{partNum}" placeholder="Part Number"  class="form-control" id="partnum">
+      <input type="number" th:field="*{partNum}" placeholder="Part Number" min="1" class="form-control" id="partnum" required>
       <label for="partnum">Part Number</label>
     </div>
 

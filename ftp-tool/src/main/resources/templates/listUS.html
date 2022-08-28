@@ -68,10 +68,16 @@
     <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
     <h1 class="display-5 fw-bold">Active Upload Sessions</h1>
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal" onclick="passVal()">
         Create Item
     </button>
 
+    <script>
+            function passVal(){
+                document.getElementById("ftppath").value = "/" + "{file_staging_path}";
+            }
+
+    </script>
     <!-- Modal -->
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -89,7 +95,7 @@
                             <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
                             <div class="form-floating">
-                                <input type="text" th:field="*{fileStagingPath}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
+                                <input type="text" th:field="*{fileStagingPath}" value="/{path}" placeholder="File Staging Server File Path"  class="form-control" id="ftppath">
                                 <label for="ftppath">File Staging Server File Path</label>
                             </div>
                             <div class="mb-3">
@@ -100,7 +106,12 @@
                                 <input type="number" th:field="*{fileSize}" readonly="true"  class="form-control" id="filesize">
                                 <label for="filesize">File Size</label>
                             </div>
-
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="flexCheckChecked" th:field="*{overwrite}" checked>
+                                <label class="form-check-label" for="flexCheckChecked">
+                                    Overwrite
+                                </label>
+                            </div>
                             <script>
                               const inputElement = document.getElementById("formFile");
                               inputElement.addEventListener("change", handleFiles, false);
@@ -124,6 +135,115 @@
         </div>
     </div>
 
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel">Upload</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/uploadRUSproc}" th:object="${uploadUS}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Upload to a Session</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{filePath}" placeholder="Local File Path"  class="form-control" id="path">
+                                <label for="path">Local File Path</label>
+                            </div>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessId">
+                                <label for="sessId">Session ID</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="text" th:field="*{filename}" placeholder="Local Filename"  class="form-control" id="filename">
+                                <label for="filename">Local Filename</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="number" th:field="*{partNum}" placeholder="Part Number" min="1"  class="form-control" id="partnum">
+                                <label for="partnum">Part Number</label>
+                            </div>
+
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit">Upload</button>
+                            </div>
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="getModal" tabindex="-1" aria-labelledby="getModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="getModalLabel">Session Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <main class="form-signin w-100 m-auto">
+                    <form  action="#" th:action="@{/sessiondetail}" th:object="${sessId}"
+                           method="post">
+                        <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                        <h1 class="h3 mb-3 fw-normal">Get Upload Session Details</h1>
+                        <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                        <div class="form-floating">
+                            <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessionId" required="true">
+                            <label for="sessionId">Session ID</label>
+                        </div>
+
+                        <div>
+                            <button class="w-100 btn btn-lg btn-primary"  type="submit">Get Details</button>
+                        </div>
+
+                    </form>
+                </main>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="listPartsModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="listPartsModalLabel">List Parts</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/listfiledetail}" th:object="${sessId}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">List File Parts in a Session</h1>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sess_Id" required="true">
+                                <label for="sess_Id">Session ID</label>
+                            </div>
+
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary"  type="submit">List Details</button>
+                            </div>
+
+                        </form>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="abortModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -157,6 +277,43 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="commitModal" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commitModalLabel">Commit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <main class="form-signin w-100 m-auto">
+                        <form  action="#" th:action="@{/commitsessionproc}" th:object="${commitId}"
+                               method="post">
+                            <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
+                            <h1 class="h3 mb-3 fw-normal">Commit Upload Session</h1>
+                            <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
+
+                            <div class="form-floating">
+                                <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sess__id">
+                                <label for="sess__id">Session ID</label>
+                            </div>
+
+                            <div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit">Commit</button><br>
+                            </div>
+
+                        </form>
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                            <a class="btn btn-outline-primary" th:href="@{/uploadsession}">Upload Session APIs</a>
+                            <a class="btn btn-outline-warning" th:href="@{/listUS}">List Upload Sessions</a>
+                        </div>
+                    </main>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="mx-auto">
         <table class="table table-hover">
@@ -173,14 +330,19 @@
             </tr>
             <tr th:each="item : ${data}">
                 <td th:text="${item.getPath()}">Path</td>
-                <td th:text="${item.getId()}">ID</td>
+                <td>
+                    <a href="#" th:text="${item.getId()}" onclick="passList(this)" data-bs-toggle="modal" data-bs-target="#getModal"></a>
+                </td>
                 <td th:text="${item.getExpirationDate()}">Expiration Date</td>
                 <td th:text="${item.getCreatedDate()}">Created Date</td>
                 <td th:text="${item.getLastUploadedDate()}">Last Uploaded Date</td>
                 <td th:text="${item.getOwner()}">Owner</td>
-                <td th:text="${item.getUploadedParts()}">Uploaded Parts</td>
+                <td>
+                    <a href="#" th:text="${item.getUploadedParts()}" onclick="passPartSess(this)" data-bs-toggle="modal" data-bs-target="#listPartsModal"></a>
+                </td>
                 <td th:text="${item.getSize()}">Size</td>
                 <td th:text="${item.getUploaded()}">Uploaded</td>
+
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary">Actions</button>
@@ -189,18 +351,17 @@
                         </button>
                         <ul class="dropdown-menu">
 
-<!--                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#updateModal">Upload</a></li>-->
-<!--                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#createModal">Commit</a></li>-->
-<!--                            <li><a class="dropdown-item" onclick="passPath(this)" data-bs-toggle="modal" data-bs-target="#createModal">List Parts</a></li>-->
-<!--                            <li><hr class="dropdown-divider"></li>-->
-                            <li><a class="btn btn-danger" onclick="passPath(this)"  data-bs-toggle="modal" data-bs-target="#abortModal">Abort</a></li>
+                            <li><a class="dropdown-item" onclick="passSess(this)" data-bs-toggle="modal" data-bs-target="#uploadModal">Upload to Session</a></li>
+                            <li><a class="dropdown-item" onclick="passSess(this)" data-bs-toggle="modal" data-bs-target="#commitModal">Commit</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="btn btn-danger" onclick="passSess(this)"  data-bs-toggle="modal" data-bs-target="#abortModal">Abort</a></li>
                         </ul>
                     </div>
                 </td>
             </tr>
         </table>
         <script>
-            function passPath(that){
+            function passSess(that){
                 let rowE = that.parentElement.parentElement.parentElement.parentElement
                 for (var i = 0; i < 8; i++){
                     rowE = rowE.previousElementSibling;
@@ -209,10 +370,31 @@
                     let input = document.getElementById("abortsessId");
                     input.value = rowE.innerText;
                 }
-
-
+                if (that.innerText == "Commit"){
+                    let input = document.getElementById("sess__id");
+                    input.value = rowE.innerText;
+                }
+                if (that.innerText == "Upload to Session"){
+                    let input = document.getElementById("sessId");
+                    input.value = rowE.innerText;
+                }
 
             }
+
+            function passPartSess(that){
+                that = that.parentElement;
+                for (var i = 0; i < 5; i++){
+                    that = that.previousElementSibling;
+                }
+                let input = document.getElementById("sess_Id");
+                input.value = that.innerText;
+
+            }
+
+            function passList(that){
+                document.getElementById("sessionId").value = that.innerText;
+            }
+
         </script>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a class="btn btn-primary" th:href="@{/uploadsession}">Upload Session APIs</a>

@@ -6,7 +6,9 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
-    <title>Abort Upload Session</title>
+    <title>Successful Commit</title>
+    <meta name="theme-color" content="#712cf9">
+
 
     <style>
       .bd-placeholder-img {
@@ -60,37 +62,22 @@
         -webkit-overflow-scrolling: touch;
       }
     </style>
-
-    <link href="css/signin.css" rel="stylesheet">
-
+    <link href="css/heroes.css" rel="stylesheet">
 </head>
-<body class="text-center">
+<body>
 
-
-<main class="form-signin w-100 m-auto">
-    <form  action="#" th:action="@{/abortsessionproc}" th:object="${abortId}"
-           method="post">
-        <img class="mb-4" src="images/veev.webp" alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Abort Upload Session</h1>
-        <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
-
-        <div class="form-floating">
-            <input type="text" th:field="*{sessionId}" placeholder="Session ID"  class="form-control" id="sessId" required>
-            <label for="sessId">Session ID</label>
+<div class="px-4 py-5 my-5 text-center">
+    <img class="d-block mx-auto mb-4" src="images/veev.webp" alt="" width="72" height="57">
+    <h1 class="display-5 fw-bold">Commit Upload Session Successful</h1>
+    <div class="col-lg-6 mx-auto">
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a class="btn btn-primary" th:href="@{/uploadsession}">Upload Session APIs</a>
+            <a class="btn btn-outline-warning" th:href="@{/listUS}">List Sessions</a>
         </div>
-
-        <div>
-            <button class="w-100 btn btn-lg btn-danger" type="submit">Abort</button><br>
-        </div>
-
-    </form>
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a class="btn btn-outline-primary" th:href="@{/uploadsession}">Upload Session APIs</a>
-        <a class="btn btn-outline-warning" th:href="@{/listUS}">List Upload Sessions</a>
     </div>
-</main>
-
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
 
 </body>
 </html>
