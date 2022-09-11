@@ -6,32 +6,16 @@ import com.veeva.vault.vapil.api.model.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/*
-Issues Noticed:
-- Get Item content does not appear return item content, only possibility appears to be able to return binary content
-- Issue with recursive delete API
-- TODO:
-    - Idea: db connection to store file staging server directories names
-    - When updating file/folder retrieve directories for parent directories input
-
-  TODO: Resumable upload session
-    - Get session details in list page
-    -
-
- Todo: Resolve create folder issue
- */
 
 @Controller
 public class HomeController {
@@ -250,12 +234,8 @@ public class HomeController {
             ListFTP initialList = new ListFTP();
 
             FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(initialList, true);
-            model.addAttribute("createFTP",new CreateFTP());
-            model.addAttribute("item", new UpdateFTP());
-            model.addAttribute("deleteFTP", new DeleteFTP());
-            model.addAttribute("listFTP", new ListFTP());
-            model.addAttribute("response",fileStagingItemBulkResponse.getData());
 
+            addListItems(fileStagingItemBulkResponse, model);
 
             return "listftpproc";
         }
@@ -279,12 +259,9 @@ public class HomeController {
         }
         prevList = listFTP.getItemPath();
         model.addAttribute("val", listFTP.getItemPath());
-        model.addAttribute("createFTP",new CreateFTP());
-        model.addAttribute("item", new UpdateFTP());
-        model.addAttribute("deleteFTP", new DeleteFTP());
-        model.addAttribute("listFTP", new ListFTP());
-        model.addAttribute("response",fileStagingItemBulkResponse.getData());
-//        model.addAttribute("directoryList", sortDir(fileStagingItemBulkResponse.getData()));
+
+        addListItems(fileStagingItemBulkResponse, model);
+
 
         return "listftpproc";
     }
@@ -300,16 +277,20 @@ public class HomeController {
         priorList.setItemPath(prevList);
         FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(priorList, true);
         model.addAttribute("val", prevList);
-        model.addAttribute("createFTP",new CreateFTP());
-        model.addAttribute("item", new UpdateFTP());
-        model.addAttribute("deleteFTP", new DeleteFTP());
-        model.addAttribute("listFTP", new ListFTP());
-        model.addAttribute("response",fileStagingItemBulkResponse.getData());
 
+        addListItems(fileStagingItemBulkResponse, model);
 
         return "listftpproc";
 
 
+    }
+
+    public void addListItems(FileStagingItemBulkResponse response, Model model){
+        model.addAttribute("createFTP",new CreateFTP());
+        model.addAttribute("item", new UpdateFTP());
+        model.addAttribute("deleteFTP", new DeleteFTP());
+        model.addAttribute("listFTP", new ListFTP());
+        model.addAttribute("response",response.getData());
     }
 
 //    public List<String> sortDir(List<FileStagingItemBulkResponse.FileStagingItem> items){
@@ -324,7 +305,7 @@ public class HomeController {
 //    }
 
 
-    // Unable to retrieve item content with API
+    //
 //    @GetMapping("/getitem")
 //    public String getItemFTP(Model model){
 //        GetItemFTP getItemFTP = new GetItemFTP();
