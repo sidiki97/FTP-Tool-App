@@ -10,4 +10,3 @@ com/vault/ftp/ftptool/Models/DeleteFTP.class
 com/vault/ftp/ftptool/Models/UpdateFTP.class
 com/vault/ftp/ftptool/Models/ListFTP.class
 com/vault/ftp/ftptool/Models/CreateResumableUS.class
-com/vault/ftp/ftptool/Service/UploadSessionService.class

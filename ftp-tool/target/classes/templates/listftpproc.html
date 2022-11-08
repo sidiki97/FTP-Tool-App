@@ -83,6 +83,8 @@
 
 
     </style>
+    <script th:src="@{/bootstrap.bundle.js}"></script>
+    <script th:src="@{/bootstrap.bundle.js.map}"></script>
 
     <link href="css/heroes.css" rel="stylesheet">
 </head>
@@ -106,10 +108,13 @@
                 <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#updatelistModal" onclick="addUpdatelist()">Bulk Update</a></li>
+<!--                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#updatelistModal" onclick="addUpdatelist()">Bulk Update</a></li>-->
                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deletelistModal" onclick="addlist()">Bulk Delete</a></li>
             </ul>
         </div>
+        <button type="button" class="btn btn-primary" >
+            Add to Cart
+        </button>
     </div>
 
 
@@ -132,6 +137,9 @@
                 }
 
             }
+
+
+
     </script>
 
     <div class="modal fade" id="deletelistModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
@@ -242,7 +250,7 @@
                             <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
                             <div class="input-group mb-3">
                                 <label class="input-group-text" for="inputGroupSelect01">Kind</label>
-                                <select th:field="*{kind}" class="form-select" id="inputGroupSelect01" onchange="inputChange(this)" required>
+                                <select th:field="*{kind}" class="form-select" id="inputGroupSelect01" onchange="inputChange(this)">
                                     <option value="" selected>Please select kind: </option>
                                     <option id="file" value="File">File</option>
                                     <option value="Folder">Folder</option>
@@ -251,19 +259,19 @@
                             <script type="text/javascript">
                                 function inputChange(that) {
                                 if (document.getElementById("file").selected) {
-                                    document.getElementById("localpath").style.display = "block";
+                                    document.getElementById("formFile").style.display = "block";
                                 } else {
-                                    document.getElementById("localpath").style.display = "none";
+                                    document.getElementById("formFile").style.display = "none";
                                 }
                                 }
-                            </script>
-                            <div class="form-floating">
-                                <input id="localpath" style="display: none;" type="text" th:field="*{inputPath}" placeholder="Local File Path" class="form-control">
-                                <label for="localpath">Local File Path</label>
-                            </div>
 
+                            </script>
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label">Select File to Upload</label>
+                                <input class="form-control" type="file" id="formFile" name="file">
+                            </div>
                             <div class="form-floating">
-                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"   class="form-control" id="ftppath">
+                                <input type="text" th:field="*{ftpPath}" placeholder="File Staging Server File Path"   class="form-control" id="ftppath" required>
                                 <label for="ftppath">File Staging Server File Path</label>
                             </div>
                             <div class="form-check">
@@ -305,7 +313,7 @@
                             <span th:if="${errorMessage}"  th:text="${errorMessage}">Error</span>
 
                             <div class="form-floating">
-                                <input id="path" type="text" th:field="*{path}" placeholder="File Staging Server File Path" class="form-control">
+                                <input id="path" type="text" th:field="*{path}" placeholder="File Staging Server File Path" class="form-control" required>
                                 <label for="path">File Staging Server File Path</label>
                             </div>
                             <div class="form-floating">
@@ -448,6 +456,8 @@
         </table>
         <script>
 
+            const createMod = new bootstrap.Modal('#createModal');
+            createMod.show();
             let listtable = document.getElementById("checktable");
 
 
