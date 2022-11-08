@@ -70,8 +70,8 @@
     <h1 class="display-5 fw-bold">Resumable Upload Session Created</h1>
     <div class="col-lg-6 mx-auto">
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <label>Session ID: </label>
-            <span th:if="${sessionId}"  th:text="${sessionId}">SessionID</span>
+            <label class="lead mb-4">Session ID: </label>
+            <label><span th:if="${sessionId}"  th:text="${sessionId}">SessionID</span></label>
         </div>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a class="btn btn-primary" th:href="@{/uploadsession}">Upload Session APIs</a>

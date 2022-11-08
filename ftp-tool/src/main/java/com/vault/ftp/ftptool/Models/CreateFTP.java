@@ -6,15 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 public class CreateFTP {
-    private String inputPath;
     private String kind;
     private String ftpPath;
     private Boolean overwrite;
 
 
-    public String getInputPath() {
-        return inputPath;
-    }
 
     public String getKind() {
         return kind;
@@ -30,10 +26,6 @@ public class CreateFTP {
 
     public void setFtpPath(String ftpPath) {
         this.ftpPath = ftpPath;
-    }
-
-    public void setInputPath(String inputPath) {
-        this.inputPath = inputPath;
     }
 
     public void setKind(String kind) {

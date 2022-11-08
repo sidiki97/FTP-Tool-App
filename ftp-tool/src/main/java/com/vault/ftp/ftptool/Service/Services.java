@@ -78,14 +78,15 @@ public class Services {
     }
 
 
-    public FileStagingItemResponse createFTP(CreateFTP createFTP){
+    public FileStagingItemResponse createFTP(CreateFTP createFTP, MultipartFile file) throws IOException{
 
-        if (createFTP.getInputPath().length() == 0){
-            createFTP.setInputPath(null);
-        }
+//        if (createFTP.getInputPath().length() == 0){
+//            createFTP.setInputPath(null);
+//        }
+
 
         FileStagingItemResponse fileStagingItemResponse = vaultClient.newRequest(FileStagingRequest.class)
-                .setInputPath(createFTP.getInputPath())
+                .setFile(file.getOriginalFilename(), file.getBytes())
                 .setOverwrite(createFTP.getOverwrite())
                 .createFolderOrFile(kindMap.get(createFTP.getKind()), createFTP.getFtpPath());
 

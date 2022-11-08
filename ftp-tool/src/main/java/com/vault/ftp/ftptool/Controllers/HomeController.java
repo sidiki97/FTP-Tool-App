@@ -3,10 +3,12 @@ package com.vault.ftp.ftptool.Controllers;
 import com.vault.ftp.ftptool.Models.*;
 import com.vault.ftp.ftptool.Service.Services;
 import com.veeva.vault.vapil.api.model.response.*;
+import com.veeva.vault.vapil.api.request.FileStagingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
@@ -101,12 +103,13 @@ public class HomeController {
         }
         CreateFTP createFTP = new CreateFTP();
 
+
         model.addAttribute("createFTP",createFTP);
         return "createftp";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createftpproc")
-    public String ftpCreateProc(@ModelAttribute("createFTP") CreateFTP createFTP, Model model) {
+    public String ftpCreateProc(@ModelAttribute("createFTP") CreateFTP createFTP, @RequestAttribute("file") MultipartFile file, Model model) throws IOException{
         if (services.clientNull()){
             model.addAttribute("auth", new Authentication());
             return "auth";
@@ -114,8 +117,7 @@ public class HomeController {
         initial = true;
         try
         {
-
-            FileStagingItemResponse fileStagingItemResponse = services.createFTP(createFTP);
+            FileStagingItemResponse fileStagingItemResponse = services.createFTP(createFTP, file);
             if (fileStagingItemResponse.hasErrors()){
                 model.addAttribute("errorMessage", fileStagingItemResponse.getErrors().get(0).getMessage());
                 return "createftp";
@@ -167,6 +169,7 @@ public class HomeController {
             model.addAttribute("auth", new Authentication());
             return "auth";
         }
+
 
         String paths = updateFTP.getPath();
         List<String> pathArray = Arrays.asList(paths.split(","));

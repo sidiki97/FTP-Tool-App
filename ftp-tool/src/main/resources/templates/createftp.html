@@ -83,19 +83,23 @@ add that to request
                 <option id="file" value="File">File</option>
                 <option value="Folder">Folder</option>
             </select>
-        </div>
-        <script type="text/javascript">
-        function inputChange(that) {
-        if (document.getElementById("file").selected) {
-            document.getElementById("localpath").style.display = "block";
-        } else {
-            document.getElementById("localpath").style.display = "none";
-        }
-        }
-        </script>
-        <div class="form-floating">
-            <input id="localpath" style="display: none;" type="text" th:field="*{inputPath}" placeholder="Local File Path" class="form-control">
-            <label for="localpath">Local File Path</label>
+<!--        </div>-->
+<!--        <script type="text/javascript">-->
+<!--        function inputChange(that) {-->
+<!--        if (document.getElementById("file").selected) {-->
+<!--            document.getElementById("localpath").style.display = "block";-->
+<!--        } else {-->
+<!--            document.getElementById("localpath").style.display = "none";-->
+<!--        }-->
+<!--        }-->
+<!--        </script>-->
+<!--        <div class="form-floating">-->
+<!--            <input id="localpath" style="display: none;" type="text" th:field="*{inputPath}" placeholder="Local File Path" class="form-control">-->
+<!--            <label for="localpath">Local File Path</label>-->
+<!--        </div>-->
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Select File to Upload</label>
+            <input class="form-control" type="file" id="formFile" name="file">
         </div>
 
         <div class="form-floating">
@@ -113,7 +117,7 @@ add that to request
             <button class="w-100 btn btn-lg btn-primary" type="submit">Upload</button><br>
         </div>
 
-
+        </div>
     </form>
     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
         <a class="btn btn-outline-primary" th:href="@{/ftpoptions}">File Staging APIs</a>
