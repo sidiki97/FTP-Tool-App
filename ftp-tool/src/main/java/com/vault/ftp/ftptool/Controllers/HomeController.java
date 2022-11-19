@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import java.io.IOException;
@@ -28,6 +29,8 @@ public class HomeController {
     private boolean initial = true;
 
     private String prevList;
+
+    private String deletedItem;
 
     @GetMapping
     public String homePage(){
@@ -57,11 +60,14 @@ public class HomeController {
                 return "auth";
             }
 
-            model.addAttribute("url", services.getUrl());
-            model.addAttribute("vault_dns", services.getDNS());
-            List<AuthenticationResponse.Vault> urls = services.getUrls();
-            model.addAttribute("urls", urls);
-            return "ftpoptions";
+            addNav(model);
+            ListFTP initialList = new ListFTP();
+            prevList = "/";
+            FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(initialList);
+
+            addListItems(fileStagingItemBulkResponse, model);
+
+            return "listftpproc";
 
         } catch (NullPointerException e){
             model.addAttribute("errorMessage", "DNS not recognized");
@@ -109,7 +115,7 @@ public class HomeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createftpproc")
-    public String ftpCreateProc(@ModelAttribute("createFTP") CreateFTP createFTP, @RequestAttribute("file") MultipartFile file, Model model) throws IOException{
+    public String ftpCreateProc(@ModelAttribute("createFTP") CreateFTP createFTP, @RequestAttribute("file") MultipartFile file, Model model, RedirectAttributes attributes) throws IOException{
         if (services.clientNull()){
             model.addAttribute("auth", new Authentication());
             return "auth";
@@ -119,20 +125,26 @@ public class HomeController {
         {
             FileStagingItemResponse fileStagingItemResponse = services.createFTP(createFTP, file);
             if (fileStagingItemResponse.hasErrors()){
-                model.addAttribute("errorMessage", fileStagingItemResponse.getErrors().get(0).getMessage());
-                return "createftp";
+                attributes.addFlashAttribute("errorMessage", fileStagingItemResponse.getErrors().get(0).getMessage());
             }
-            model.addAttribute("kind", fileStagingItemResponse.getData().getKind());
-            model.addAttribute("path", fileStagingItemResponse.getData().getPath());
-            model.addAttribute("name", fileStagingItemResponse.getData().getName());
-            if (!(fileStagingItemResponse.getData().getKind() == "file")){
-                model.addAttribute("size", fileStagingItemResponse.getData().getSize());
-                model.addAttribute("md5", fileStagingItemResponse.getData().getFileContentMd5());
+            else {
+                //model.addAttribute("message", "Item successfully created!");
+                attributes.addFlashAttribute("message", "Item successfully created!");
             }
+
+//            model.addAttribute("kind", fileStagingItemResponse.getData().getKind());
+//            model.addAttribute("path", fileStagingItemResponse.getData().getPath());
+//            model.addAttribute("name", fileStagingItemResponse.getData().getName());
+//            if (!(fileStagingItemResponse.getData().getKind() == "file")){
+//                model.addAttribute("size", fileStagingItemResponse.getData().getSize());
+//                model.addAttribute("md5", fileStagingItemResponse.getData().getFileContentMd5());
+//            }
 //            model.addAttribute("size", fileStagingItemResponse.getData().getSize());
 //            model.addAttribute("md5", fileStagingItemResponse.getData().getFileContentMd5());
 
-            return "createftpproc";
+
+            return "redirect:/listftp";
+
         }
         catch (NullPointerException exception){
             model.addAttribute("errorMessage", "No such file or directory");
@@ -209,20 +221,35 @@ public class HomeController {
     }
 
     @PostMapping("/deleteftpproc")
-    public String ftpDeleteProc(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP, Model model){
+    public String ftpDeleteProc(@ModelAttribute("deleteFTP") DeleteFTP deleteFTP, Model model, RedirectAttributes attributes) throws InterruptedException{
         if (services.clientNull()){
             model.addAttribute("auth", new Authentication());
             return "auth";
         }
 
         FileStagingJobResponse fileStagingJobResponse = services.deleteFTP(deleteFTP);
+//        if (fileStagingJobResponse.hasErrors()){
+//            model.addAttribute("errorMessage", fileStagingJobResponse.getErrors().get(0).getMessage());
+//            return "deleteftp";
+//        }
+//        model.addAttribute("jobId", fileStagingJobResponse.getData().getJobId());
+//        initial = true;
+//        return "deleteftpproc";
+
         if (fileStagingJobResponse.hasErrors()){
-            model.addAttribute("errorMessage", fileStagingJobResponse.getErrors().get(0).getMessage());
-            return "deleteftp";
+            String one = fileStagingJobResponse.getResponse();
+
+            String[] split = one.split(":");
+            String last = split[split.length - 1];
+            last = last.substring(1, last.length()-4);
+            attributes.addFlashAttribute("errorMessage", last);
         }
-        model.addAttribute("jobId", fileStagingJobResponse.getData().getJobId());
-        initial = true;
-        return "deleteftpproc";
+        else {
+            attributes.addFlashAttribute("message", "Item successfully deleted!");
+            deletedItem = deleteFTP.getFtpPath();
+        }
+
+        return "redirect:/listftp";
     }
 
     @GetMapping("/listftp")
@@ -232,29 +259,25 @@ public class HomeController {
             return "auth";
         }
 
-        if (initial){
-            initial = false;
-            ListFTP initialList = new ListFTP();
+        addNav(model);
+        ListFTP initialList = new ListFTP();
+        initialList.setItemPath(prevList);
+        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(initialList);
+        model.addAttribute("val", initialList.getItemPath());
+        addListItems(fileStagingItemBulkResponse, model);
 
-            FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(initialList, true);
 
-            addListItems(fileStagingItemBulkResponse, model);
 
-            return "listftpproc";
-        }
+        return "listftpproc";
 
-        model.addAttribute("listFTP",new ListFTP());
-        return "listftp";
+
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/listftpproc")
     public String ftpListProc(@ModelAttribute("listFTP") ListFTP listFTP, Model model){
-        if (services.clientNull()){
-            model.addAttribute("auth", new Authentication());
-            return "auth";
-        }
+        addNav(model);
 
-        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP, false);
+        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(listFTP);
 
         if (fileStagingItemBulkResponse.hasErrors()){
             model.addAttribute("errorMessage", fileStagingItemBulkResponse.getErrors().get(0).getMessage());
@@ -278,7 +301,7 @@ public class HomeController {
 
         ListFTP priorList = new ListFTP();
         priorList.setItemPath(prevList);
-        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(priorList, true);
+        FileStagingItemBulkResponse fileStagingItemBulkResponse = services.listFTP(priorList);
         model.addAttribute("val", prevList);
 
         addListItems(fileStagingItemBulkResponse, model);
@@ -293,6 +316,17 @@ public class HomeController {
         model.addAttribute("item", new UpdateFTP());
         model.addAttribute("deleteFTP", new DeleteFTP());
         model.addAttribute("listFTP", new ListFTP());
+        if (deletedItem != null){
+            int i = -1;
+            for (FileStagingItemBulkResponse.FileStagingItem item : response.getData()){
+                if (!(item.getPath() == deletedItem)){
+                    i = response.getData().indexOf(item);
+                }
+            }
+
+            response.getData().remove(i);
+            deletedItem = null;
+        }
         model.addAttribute("response",response.getData());
     }
 

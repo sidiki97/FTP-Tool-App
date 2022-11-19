@@ -111,12 +111,10 @@ public class Services {
         return fileStagingJobResponse;
     }
 
-    public FileStagingItemBulkResponse listFTP(ListFTP listFTP, boolean initial){
+    public FileStagingItemBulkResponse listFTP(ListFTP listFTP){
 
-        if (initial){
-            listFTP.setRecursive(false);
-        }
-        else if (listFTP.getRecursive() == null){
+
+        if (listFTP.getRecursive() == null){
             listFTP.setRecursive(false);
         }
         FileStagingItemBulkResponse fileStagingItemBulkResponse = vaultClient.newRequest(FileStagingRequest.class)
