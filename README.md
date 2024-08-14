@@ -18,7 +18,7 @@ Utilizes Vault API Library [VAPIL](https://github.com/veeva/vault-api-library) t
 7. Abort Upload Session
 
 
-`java -jar target/gs-rest-service-0.1.0.jar`
+
 
 
 
